@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['namespace'=>'App\Http\Controllers'],function(){
+    Route::get('/','FrontendController@index')->name('home');
+    Route::get('/login','FrontendController@login')->name('login');
+    Route::post('/postLogin','FrontendController@postLogin')->name('postLogin');
 });
