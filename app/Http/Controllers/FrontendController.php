@@ -57,4 +57,6 @@ class FrontendController extends Controller{
         session()->forget('users');
         return redirect()->route('login');
     }
+
+
 }
