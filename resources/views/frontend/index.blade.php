@@ -97,23 +97,30 @@
         <div class="row-sm">
             <nav aria-label="Page navigation">
               <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo; Previous</span>
-                  </a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">Next &raquo;</span>
-                  </a>
-                </li>
+                {{$users->links()}}
               </ul>
             </nav>
         </div>
 
-        <div class="text-right"><strong>Tổng số users</strong></div>
+        <div class="text-right"><strong>Tổng số {{count($users)}} users</strong></div>
+
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> {{session('success')}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+
+        @if(session('fail'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Sorry!</strong> {{session('fail')}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
 
         <div class="row-sm text-center">
             <table class="table table-striped">
@@ -128,51 +135,41 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($users as $u)
                     <tr>
-                        <td scope="row">1</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>a@a</td>
-                        <td>a</td>
-                        <td>a</td>
+                        <td scope="row">{{$u->id}}</td>
+                        <td>{{$u->name}}</td>
+                        <td>{{$u->email}}</td>
+                        <td>{{$u->group_role}}</td>
+                        @if($u->is_active == 1)
+                        <td class="text-success">Đang hoạt động</td>
+                        @elseif($u->is_active == 0)
+                        <td class="text-danger">Tạm khóa</td>
+                        @endif
                         <td>
-                            <i class="fas fa-pencil-alt"></i>
-                            <i class="fas fa-trash-alt"></i>
-                            <i class="fas fa-user-minus"></i>
+                            <a name="edit" id="edit" class="text-dark" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
+                            <a name="delete" id="delete" class="text-dark" href="{{route('delete',['id'=>$u->id])}}"
+                            onclick="alertFunction('delete')" role="button"><i class="fas fa-trash-alt"></i></a>
+                            <a name="deactive" id="deactive" class="text-dark" href="{{route('deact',['id'=>$u->id])}}"
+                            onclick="alertFunction('deactive')" role="button"><i class="fas fa-user-minus"></i></a>
                         </td>
                     </tr>
-                    <tr >
-                        <td scope="row">2</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>a@a</td>
-                        <td>a</td>
-                        <td>a</td>
-                        <td>
-                            <i class="fas fa-pencil-alt"></i>
-                            <i class="fas fa-trash-alt"></i>
-                            <i class="fas fa-user-minus"></i>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
         <div class="row-sm">
             <nav aria-label="Page navigation">
               <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo; Previous</span>
-                  </a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">Next &raquo;</span>
-                  </a>
-                </li>
+                {{$users->links()}}
               </ul>
             </nav>
         </div>
     </div>
 </div>
+<script>
+    function alertFunction($string){
+        alert("Are you sure to "+$string+" it!");
+    }
+</script>
 @stop

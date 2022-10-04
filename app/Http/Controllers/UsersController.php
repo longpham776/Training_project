@@ -6,13 +6,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
-class FrontendController extends Controller{
+class UsersController extends Controller{
 
     public function index(){
         if(!Cookie::get('user') || !session()->has('users')){
             return redirect()->route('login');
         }
-        return view('frontend.index');
+        $users = DB::table('users')->select('id','name','email','group_role','is_active')->where('is_delete',0)->paginate(2);
+        return view('frontend.index',compact('users'));
     }
 
     public function login(){
@@ -28,8 +29,12 @@ class FrontendController extends Controller{
             'email.required'=>'The :attribute is not empty',
             'password.required'=>'The :attribute is not empty'
         ]);
-        $users = DB::table('users')->where('email',$request->email)->get();
-        if($users->isEmpty()) 
+
+        $users = DB::table('users')->where('email',$request->email)->where('is_delete',0)->get();
+
+        if($users[0]->is_active == 0){
+            return redirect()->route('login')->with('fail_login','Your account is banned');
+        }else if($users->isEmpty()) 
             return redirect()->route('login')->with('fail_login','Wrong email!');
         else if(!Hash::check($request->password,$users[0]->password))
             return redirect()->route('login')->with('fail_login','Wrong Password!');
@@ -50,7 +55,7 @@ class FrontendController extends Controller{
             }
         }
         session()->put('users',$users) ;
-        return view('frontend.index');
+        return redirect()->route('home');
     }
 
     public function logout(){
@@ -58,5 +63,21 @@ class FrontendController extends Controller{
         return redirect()->route('login');
     }
 
+    public function delete($id){
+        DB::table('users')
+        ->where('id',$id)
+        ->update(['is_active' => 0,'is_delete' => 1]);
+        return redirect()->route('home')->with('success','You delete acount successful!');
+    }
 
+    public function deact($id){
+        $user = DB::table('users')->where('id',$id)->get();
+        if($user[0]->is_active == 0){
+            return redirect()->route('home')->with('fail','This account is already deactive.');
+        }else if(session('users')[0]->id == $id){
+            return redirect()->route('login');
+        }
+        DB::table('users')->where('id',$id)->update(['is_active'=>0]);
+        return redirect()->route('home')->with('success','You deactive account successful!');
+    }
 }
