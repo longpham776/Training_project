@@ -17,4 +17,5 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::get('/','FrontendController@index')->name('home');
     Route::get('/login','FrontendController@login')->name('login');
     Route::post('/postLogin','FrontendController@postLogin')->name('postLogin');
+    Route::get('/logout','FrontendController@logout')->name('logout');
 });
