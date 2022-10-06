@@ -11,16 +11,47 @@
                 <a class="nav-link" href="#">Khách hàng</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="#">Users</a>
+                <a class="nav-link" href="{{route('home')}}">Users</a>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search">
-            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button> &ensp;
-            <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Clear</button>
+        <form class="form-inline my-2 my-lg-0" action="{{route('home')}}" method="GET">
+            <input class="form-control mr-sm-2" type="text" name="nameSearch" value="{{old('nameSearch')}}" placeholder="Tên">
+            <input class="form-control mr-sm-2" type="text" name="emailSearch" value="{{old('emailSearch')}}" placeholder="Email">
+            <select class="form-control" name="groupSearch" id="groupSearch">
+                @if(old('groupSearch') == "Admin")
+                <option value="Admin" selected>Admin</option>
+                <option value="Editor">Editor</option>
+                <option value="Reviewer">Reviewer</option>
+                @elseif(old('groupSearch') == "Editor")
+                <option value="Admin">Admin</option>
+                <option value="Editor" selected>Editor</option>
+                <option value="Reviewer">Reviewer</option>
+                @elseif(old('groupSearch') == "Reviewer")
+                <option value="Admin">Admin</option>
+                <option value="Editor">Editor</option>
+                <option value="Reviewer" selected>Reviewer</option>
+                @else
+                <option value="Admin">Admin</option>
+                <option value="Editor">Editor</option>
+                <option value="Reviewer">Reviewer</option>
+                @endif
+            </select>
+            &ensp;
+            <select class="form-control" name="activeSearch" id="activeSearch">
+                @if(old('activeSearch') == 1)
+                <option value="1" selected>Đang hoạt động</option>
+                <option value="0">Tạm khóa</option>
+                @elseif(old('activeSearch') == 0)
+                <option value="1">Đang hoạt động</option>
+                <option value="0" selected>Tạm khóa</option>
+                @else
+                <option value="1">Đang hoạt động</option>
+                <option value="0">Tạm khóa</option>
+                @endif
+            </select>
+            &ensp;
+            <button class="btn btn-outline-light my-2 my-sm-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Search</button> &ensp;
+            <button class="btn btn-outline-danger my-2 my-sm-0" id="btnClear" type="submit">Clear</button>
         </form>
     </div>
 </nav>
@@ -148,12 +179,12 @@
                         <td class="text-danger">Tạm khóa</td>
                         @endif
                         <td>
-                            <a name="edit" id="edit" class="btnEdit" href="#" data-toggle="modal" data-target="#modelId" 
+                            <a name="edit" id="edit" class="btnEdit text-dark" href="#" data-toggle="modal" data-target="#modelId" 
                             data-id="{{$u->id}}" role="button"><i class="fas fa-pencil-alt"></i></a>
                             <a name="delete" id="delete" class="text-dark" href="{{route('delete',['id'=>$u->id])}}"
-                            onclick="alertFunction('delete {{$u->name}}')" role="button"><i class="fas fa-trash-alt"></i></a>
+                            onclick="if (confirm('Are you sure to delete {{$u->name}}')) commentDelete(1); return false" role="button"><i class="fas fa-trash-alt"></i></a>
                             <a name="deactive" id="deactive" class="text-dark" href="{{route('deact',['id'=>$u->id])}}"
-                            onclick="alertFunction('deactive {{$u->name}}')" role="button"><i class="fas fa-user-minus"></i></a>
+                            onclick="if (confirm('Are you sure to deactive {{$u->name}}')) commentDelete(1); return false" role="button"><i class="fas fa-user-minus"></i></a>
                         </td>
                     </tr>
                     @endforeach
@@ -175,6 +206,14 @@
 @section('js')
 
 <script>
+    $('#btnClear').on('click',function(){
+        $.ajax({
+            type:'GET',
+            success: function(response){
+                window.location = "{{url('/')}}";
+            }
+        });
+    });
     $('#exampleModal').on('show.bs.modal', event => {
         var button = $(event.relatedTarget);
         var modal = $(this);
@@ -217,8 +256,5 @@
 
         // return false;
     });
-    function alertFunction($string){
-        confirm("Are you sure to "+$string);
-    }
 </script>
 @stop

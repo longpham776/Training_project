@@ -7,14 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
 
 class UsersController extends Controller{
 
-    public function index(){
+    public function index(Request $request){
         if(!Cookie::get('user') || !session()->has('users')){
             return redirect()->route('login');
         }
-        $users = DB::table('users')->select('id','name','email','group_role','is_active')->where('is_delete',0)->paginate(5);
+        $users = DB::table('users')->select('id','name','email','group_role','is_active')->where('is_delete',0)->orderByDesc('id');
+        if(!empty($request->nameSearch)){
+            $users->where('name','like','%'.$request->nameSearch.'%');
+        }else if(!empty($request->emailSearch)){
+            $users->where('email','like','%'.$request->emailSearch.'%');
+        }else if(!empty($request->groupSearch)){
+            $users->where('group_role',$request->groupSearch)->where('is_active',$request->activeSearch);
+        }
+        $users = $users->paginate(5); 
+        $request->flash();
         return view('frontend.index',compact('users'));
     }
 
@@ -146,8 +156,7 @@ class UsersController extends Controller{
         if(!$request->active)   $request->active = 0;
         else    $request->active = 1;
         if(!$request->password){
-            DB::table('users')
-            ->where('id',$request->userId)
+            User::where('id',$request->userId)
             ->update([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -155,8 +164,7 @@ class UsersController extends Controller{
                 'is_active' => $request->active
             ]);
         }else if($request->password){
-            DB::table('users')
-            ->where('id',$request->userId)
+            User::where('id',$request->userId)
             ->update([
                 'name' => $request->name,
                 'email' => $request->email,
