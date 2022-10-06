@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CustomerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 #Users
+
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::get('/','UsersController@index')->name('home');
     Route::get('/login','UsersController@login')->name('login');
     Route::post('/postLogin','UsersController@postLogin')->name('postLogin');
     Route::get('/logout','UsersController@logout')->name('logout');
+    
     Route::get('/delete/{id}','UsersController@delete')->name('delete');
     Route::get('/deact/{id}','UsersController@deact')->name('deact');
     Route::post('/adduser','UsersController@addUser')->name('addUser');
@@ -27,8 +29,13 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
 #Customers
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     
+    Route::resource('customers', CustomerController::class)->except([
+        'create','edit'
+    ]);
 });
 #Products
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     
 });
+
+

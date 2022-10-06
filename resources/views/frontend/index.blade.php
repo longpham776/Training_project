@@ -8,7 +8,7 @@
                 <a class="nav-link" href="#">Sản phẩm </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Khách hàng</a>
+                <a class="nav-link" href="{{route('customers.index')}}">Khách hàng</a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="{{route('home')}}">Users</a>
