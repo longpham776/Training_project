@@ -37,7 +37,7 @@
         <div class="row-sm">
 
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary btn-xl" data-toggle="modal" data-target="#modelId">
+            <button type="button" id="btnAdd" class="btn btn-primary btn-xl" data-toggle="modal" data-target="#modelId">
                 <i class="fas fa-user-plus"> Thêm user</i>
             </button>
             
@@ -45,53 +45,54 @@
             <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                            <div class="modal-header">
-                                    <h5 class="modal-title">Thêm User / Chỉnh sửa User</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                </div>
-                        <div class="modal-body">
-                            <div class="container-fluid">
-                                <div class="form-group">
-                                    <form action="#" method="post">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Thêm User / Chỉnh sửa User</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form class="editAddUser" action="#" method="post">
+                            @csrf
+                            <input type="hidden" name="userId" value="">
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="form-group">
                                         <label><strong>Tên</strong></label>
-                                        <input type="text" class="form-control" name="name" id="" aria-describedby="helpId" placeholder="Nhập họ tên">
+                                        <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nhập họ tên">
+                                        @error('name')
+                                        <span style="color:red;">{{$message}}</span><br>
+                                        @enderror
                                         <label><strong>Email</strong></label>
-                                        <input type="text" class="form-control" name="email" id="" aria-describedby="helpId" placeholder="Nhập Email">
+                                        <input type="text" class="form-control" name="email" id="email" aria-describedby="helpId" placeholder="Nhập Email">
+                                        @error('email')
+                                        <span style="color:red;">{{$message}}</span><br>
+                                        @enderror
                                         <label><strong>Mật khẩu</strong></label>
-                                        <input type="text" class="form-control" name="password" id="" aria-describedby="helpId" placeholder="Nhập mật khẩu">
+                                        <input type="text" class="form-control" name="password" id="password" aria-describedby="helpId" placeholder="Nhập mật khẩu">
+                                        @error('password')
+                                        <span style="color:red;">{{$message}}</span><br>
+                                        @enderror
                                         <label><strong>Xác nhận</strong></label>
-                                        <input type="text" class="form-control" name="confirm" id="" aria-describedby="helpId" placeholder="Nhập xác nhận">
+                                        <input type="text" class="form-control" name="password_confirmation" id="password_confirmation" aria-describedby="helpId" placeholder="Nhập xác nhận">
                                         <label><strong>Nhóm</strong></label>
-                                        <select class="form-control" name="group" id="">
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                          </select>
+                                        <select class="form-control" name="group" id="group">
+                                            <option value="Admin">Admin</option>
+                                            <option value="Editor">Editor</option>
+                                            <option value="Reviewer">Reviewer</option>
+                                        </select>
                                         <label><strong>Trạng thái</strong></label>
-                                        <input type="text" class="form-control" name="" id="" aria-describedby="helpId" placeholder="">
-                                    </form>
+                                        <input class="form-control" type="checkbox" name="active" id="active">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save</button>
-                        </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            
-            <script>
-                $('#exampleModal').on('show.bs.modal', event => {
-                    var button = $(event.relatedTarget);
-                    var modal = $(this);
-                    // Use above variables to manipulate the DOM
-                    
-                });
-            </script>
-            
         </div>
 
         <div class="row-sm">
@@ -147,11 +148,12 @@
                         <td class="text-danger">Tạm khóa</td>
                         @endif
                         <td>
-                            <a name="edit" id="edit" class="text-dark" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
+                            <a name="edit" id="edit" class="btnEdit" href="#" data-toggle="modal" data-target="#modelId" 
+                            data-id="{{$u->id}}" role="button"><i class="fas fa-pencil-alt"></i></a>
                             <a name="delete" id="delete" class="text-dark" href="{{route('delete',['id'=>$u->id])}}"
-                            onclick="alertFunction('delete')" role="button"><i class="fas fa-trash-alt"></i></a>
+                            onclick="alertFunction('delete {{$u->name}}')" role="button"><i class="fas fa-trash-alt"></i></a>
                             <a name="deactive" id="deactive" class="text-dark" href="{{route('deact',['id'=>$u->id])}}"
-                            onclick="alertFunction('deactive')" role="button"><i class="fas fa-user-minus"></i></a>
+                            onclick="alertFunction('deactive {{$u->name}}')" role="button"><i class="fas fa-user-minus"></i></a>
                         </td>
                     </tr>
                     @endforeach
@@ -167,9 +169,56 @@
         </div>
     </div>
 </div>
+
+@stop
+
+@section('js')
+
 <script>
+    $('#exampleModal').on('show.bs.modal', event => {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+        // Use above variables to manipulate the DOM
+        
+    });
+    $('#btnAdd').on('click',function(){
+        $('.editAddUser').attr('action',"{{route('addUser')}}");
+        $('input[name=userId]').val("");
+        $('#name').val("");
+        $('#email').val("");
+        $('#group').val("Admin").change();
+        $('#active').prop("checked",true);
+    });
+    $('.btnEdit').on('click',function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"{{url('/getUser')}}",
+            data:{'id':$(this).data('id')},
+            type:'get',
+            success:  function (response) {
+                $('input[name=userId]').val(response.user.id);
+                $('#name').val(response.user.name);
+                $('#email').val(response.user.email);
+                $('#group').val(response.user.group_role).change();
+                if(response.user.is_active)    $('#active').prop("checked",true);
+                else if(!response.user.is_active)   $('#active').prop("checked",false);
+                $('.editAddUser').attr('action',"{{route('editUser')}}");
+            },
+            statusCode: {
+                404: function() {
+                    alert('web not found');
+                }
+            },
+            error:function(x,xs,xt){
+                // window.open(JSON.stringify(x));
+                console.log('error: ' + JSON.stringify(x) +"\n error string: "+ xs + "\n error throwed: " + xt);
+            }
+        });
+
+        // return false;
+    });
     function alertFunction($string){
-        alert("Are you sure to "+$string+" it!");
+        confirm("Are you sure to "+$string);
     }
 </script>
 @stop

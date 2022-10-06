@@ -20,6 +20,9 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::get('/logout','UsersController@logout')->name('logout');
     Route::get('/delete/{id}','UsersController@delete')->name('delete');
     Route::get('/deact/{id}','UsersController@deact')->name('deact');
+    Route::post('/adduser','UsersController@addUser')->name('addUser');
+    Route::get('/getUser','UsersController@getUser')->name('getUser');
+    Route::post('/editUser','UsersController@editUser')->name('editUser');
 });
 #Customers
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
