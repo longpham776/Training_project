@@ -5,7 +5,7 @@
     <div class="collapse navbar-collapse" id="collapsibleNavId">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="#">Sản phẩm </a>
+                <a class="nav-link" href="{{route('products.index')}}">Sản phẩm </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{route('customers.index')}}">Khách hàng</a>
@@ -206,6 +206,7 @@
 @section('js')
 
 <script>
+
     $('#btnClear').on('click',function(){
         $.ajax({
             type:'GET',
@@ -214,12 +215,14 @@
             }
         });
     });
+
     $('#exampleModal').on('show.bs.modal', event => {
         var button = $(event.relatedTarget);
         var modal = $(this);
         // Use above variables to manipulate the DOM
         
     });
+
     $('#btnAdd').on('click',function(){
         $('.editAddUser').attr('action',"{{route('addUser')}}");
         $('input[name=userId]').val("");
@@ -228,6 +231,7 @@
         $('#group').val("Admin").change();
         $('#active').prop("checked",true);
     });
+    
     $('.btnEdit').on('click',function(e){
         e.preventDefault();
         $.ajax({

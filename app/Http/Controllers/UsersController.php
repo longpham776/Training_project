@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
 
 class UsersController extends Controller{
 
@@ -98,7 +97,6 @@ class UsersController extends Controller{
     }
 
     public function addUser(Request $request){
-        dd($request->all());
         $request->validate([
             'name' => 'required|string|min:5',
             'email' => 'required|string|email|unique:users',

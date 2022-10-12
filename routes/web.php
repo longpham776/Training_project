@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductsController;
+use Maatwebsite\Excel\Row;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,8 +15,8 @@ use App\Http\Controllers\CustomerController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-#Users
 
+#Users
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::get('/','UsersController@index')->name('home');
     Route::get('/login','UsersController@login')->name('login');
@@ -26,16 +29,25 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::get('/getUser','UsersController@getUser')->name('getUser');
     Route::post('/editUser','UsersController@editUser')->name('editUser');
 });
+
 #Customers
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     
+    Route::post('import','CustomerController@import')->name('customers.import');
+
+    Route::get('export-csv','CustomerController@exportCsv')->name('customers.export');
+
     Route::resource('customers', CustomerController::class)->except([
         'create','edit'
     ]);
 });
+
 #Products
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
     
+    Route::resource('products', ProductsController::class)->except([
+        'create','edit'
+    ]);
 });
 
 
