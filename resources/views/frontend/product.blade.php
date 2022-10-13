@@ -18,7 +18,7 @@
             @csrf
             <input class="form-control mr-sm-2" type="text" name="nameSearch" value="" placeholder="Tên sản phẩm">
             <select class="form-control" name="saleSearch" id="saleSearch">
-                <option value="1">Có hàng bán</option>
+                <option value="1" selected>Có hàng bán</option>
                 <option value="0">Dừng bán</option>
             </select>
             &ensp;
@@ -51,7 +51,7 @@
 
             <!-- Modal -->
             <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Chi tiết sản phẩm</h5>
@@ -59,12 +59,11 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form class="" action="#" method="post">
-                            @csrf
+                        <form id="addProduct" action="{{route('products.store')}}" method="post" enctype="multipart/form-data">
                             <div class="modal-body">
                                 <div class="container-fluid">
                                     <div class="form-group">
-                                        <div class="row">
+                                        <div class="row row-cols-2">
                                             <div class="col">
                                                 <label><strong>Tên sản phẩm</strong></label>
                                                 <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nhập tên sản phẩm">
@@ -73,38 +72,34 @@
                                                 <input type="number" class="form-control" name="price" id="price" aria-describedby="helpId" placeholder="Nhập giá bán">
                                                 <span style="color:red;" class="error_price"></span><br>
                                                 <label><strong>Mô tả</strong></label>
-                                                <textarea class="form-control" name="description" id="description" rows="5"></textarea>
-                                                <span style="color:red;" class="error_description"></span><br>
+                                                <textarea class="ckeditor form-control" name="description" id="description" rows="5" placeholder="Mô tả sản phẩm"></textarea>
                                                 <label><strong>Trạng thái</strong></label>
                                                 <select name="sale" id="sale">
                                                     <option value="1">Có hàng bán</option>
                                                     <option value="0">Dừng bán</option>
                                                 </select>
-                                                <span style="color:red;" class="error_sale"></span><br>
                                             </div>
+                                            <label><strong>Hình ảnh</strong></label>
                                             <div class="col">
-                                                <label><strong>Hình ảnh</strong></label>
-                                                <input type="image" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" alt="">
-                                                <input type="file" name="fileImage" id="fileImage">
-                                                <span style="color:red;" class="error_image"></span><br>
-                                                <button type="button">Xóa file</button>
+                                                <input type="image" name="image" id="image" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" disabled alt="">
+                                                <input type="file" name="fileImage" id="fileImage"><br>
+                                                <span style="color:red;" class="error_fileImage"></span><br>
+                                                <button class="form-control" id="btnClearImage" type="button">Xóa file</button>
                                             </div>
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btnCancel btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btnStore btn btn-primary">Save</button>
+                                <button type="submit" class="btnStore btn btn-primary" 
+                                data-url="{{route('products.store')}}">Save</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
         @include('frontend.ajaxProduct')
     </div>
 </div>

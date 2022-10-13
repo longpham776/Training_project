@@ -9,23 +9,19 @@
 
     <div class="text-right"><strong>Tổng số {{ count($products) }} khách hàng</strong></div>
 
-    @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Success!</strong> {{session('success')}}
+    <div class="noticeSuccess alert alert-success alert-dismissible fade show" hidden role="alert">
+        <strong>Success!</strong> <span id="text" aria-hidden="true">text</span>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    @endif
 
-    @if(session('fail'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Sorry!</strong> {{session('fail')}}
+    <div class="noticeFail alert alert-danger alert-dismissible fade show" hidden role="alert">
+        <strong>Sorry!</strong> <span id="text" aria-hidden="true">text</span>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-    @endif
 
     <div class="row-sm text-center">
         <table class="table table-striped">
@@ -41,26 +37,32 @@
             </thead>
             <tbody>
                 @forelse($products as $prod)
-                <tr>
+                <tr id="product{{$prod->product_id}}">
                     <td scope="row">
                         <h6>{{$prod->product_id}}</h6> <input class="form-control" type="hidden" readonly name="productId" value="{{$prod->product_id}}"></td>
                     <td>
                         <h6>{{$prod->product_name}}</h6> <input class="form-control" type="hidden" name="name" value="{{$prod->product_name}}">
                     </td>
                     <td>
-                        <h6>{{$prod->email}}</h6> <input class="form-control" type="hidden" name="email" value="{{$prod->email}}">
+                        <h6>{{$prod->description}}</h6> <input class="form-control" type="hidden" name="desciption" value="{{$prod->description}}">
                     </td>
                     <td>
-                        <h6>{{$prod->address}}</h6> <input class="form-control" type="hidden" name="address" value="{{$prod->address}}">
+                        <h6>{{$prod->product_price}}</h6> <input class="form-control" type="hidden" name="price" value="{{$prod->product_price}}">
                     </td>
                     <td>
-                        <h6>{{$prod->tel_num}}</h6> <input class="form-control" type="hidden" name="phone" value="{{$prod->tel_num}}">
+                        @if($prod->is_sales == 1)
+                        <h6>Có hàng bán</h6>
+                        @else
+                        <h6>Dừng bán</h6>
+                        @endif
+                        <input class="form-control" type="hidden" name="sale" value="{{$prod->id_sales}}">
                     </td>
                     <td>
                         <a name="editBtn" id="editBtn" class="editBtn text-dark" href="#"
                         data-id="" role="button"><i class="fas fa-pencil-alt"></i></a>
-                        <a name="delete" id="delete" class="text-dark" href="{{route('products.destroy',['product'=>$prod->product_id])}}"
-                            onclick="if (confirm('Are you sure to delete {{$prod->product_name}}')) commentDelete(1); return false" role="button"><i class="fas fa-trash-alt"></i></a>
+                        <a name="btnDelete" id="btnDelete" class="text-dark" href="#"
+                        data-url="{{route('products.destroy',['product'=>$prod->product_id])}}"
+                        data-id="{{$prod->product_id}}" data-name="{{$prod->product_name}}" role="button"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 @empty

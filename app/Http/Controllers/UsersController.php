@@ -75,7 +75,6 @@ class UsersController extends Controller{
     }
 
     public function delete($id){
-        dd("delete user",$id);
         if(session('users')[0]->id == $id){
             return redirect()->route('login');
         }

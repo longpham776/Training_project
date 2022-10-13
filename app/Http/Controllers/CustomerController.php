@@ -42,8 +42,7 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        // dd($request->all());
-        // Customer::create($request->all());
+
         $ACTIVE = 1;
         $DEACTIVE = 0;
 
