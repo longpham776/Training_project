@@ -18,7 +18,8 @@
             @csrf
             <input class="form-control mr-sm-2" type="text" name="nameSearch" value="" placeholder="Tên sản phẩm">
             <select class="form-control" name="saleSearch" id="saleSearch">
-                <option value="1" selected>Có hàng bán</option>
+                <option value="" selected>Tình trạng</option>
+                <option value="1">Có hàng bán</option>
                 <option value="0">Dừng bán</option>
             </select>
             &ensp;
@@ -59,12 +60,13 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form id="addProduct" action="{{route('products.store')}}" method="post" enctype="multipart/form-data">
+                        <form id="addProduct" action="#" method="">
                             <div class="modal-body">
                                 <div class="container-fluid">
                                     <div class="form-group">
                                         <div class="row row-cols-2">
                                             <div class="col">
+                                                <input type="hidden" name="productId" id="productId">
                                                 <label><strong>Tên sản phẩm</strong></label>
                                                 <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nhập tên sản phẩm">
                                                 <span style="color:red;" class="error_name"></span><br>
@@ -81,8 +83,8 @@
                                             </div>
                                             <label><strong>Hình ảnh</strong></label>
                                             <div class="col">
-                                                <input type="image" name="image" id="image" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" disabled alt="">
-                                                <input type="file" name="fileImage" id="fileImage"><br>
+                                                <img class="form-control h-75" name="image" id="image" alt="Image Product" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" disabled>
+                                                <input class="form-control" type="file" name="fileImage" id="fileImage"><br>
                                                 <span style="color:red;" class="error_fileImage"></span><br>
                                                 <button class="form-control" id="btnClearImage" type="button">Xóa file</button>
                                             </div>
@@ -94,6 +96,7 @@
                                 <button type="button" class="btnCancel btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="submit" class="btnStore btn btn-primary" 
                                 data-url="{{route('products.store')}}">Save</button>
+                                <button type="submit" class="btnUpdate btn btn-primary">Save</button>
                             </div>
                         </form>
                     </div>

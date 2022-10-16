@@ -43,9 +43,11 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
 
 #Products
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
-    
+
+    Route::post('products/{product}','ProductsController@update')->name('products.update');
+
     Route::resource('products', ProductsController::class)->except([
-        'create','edit'
+        'create','edit','update'
     ]);
 });
 

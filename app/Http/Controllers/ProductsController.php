@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRequestProduct;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,7 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
         //
-        $products = Product::simple()->defaultSort()->params($request->all())->paginate(1);
+        $products = Product::simple()->defaultSort()->params($request->all())->paginate(5);
         // dd($products);
         if($request->ajax()){
 
@@ -54,7 +55,7 @@ class ProductsController extends Controller
         $autoIdProduct = strtoupper(
             substr($request->name,0,1)
             ).str_pad(
-                Product::count()+1,10-strlen(Product::count()+1),'0',STR_PAD_LEFT
+                Product::count()+1,11-strlen(Product::count()+1),'0',STR_PAD_LEFT
             );
 
         if($request->hasFile('fileImage')) {
@@ -74,7 +75,7 @@ class ProductsController extends Controller
         $html = null;
         
         if($store){
-            $products = Product::simple()->defaultSort()->params($request->all())->paginate(1);
+            $products = Product::simple()->defaultSort()->params($request->all())->paginate(5);
             $html = view('frontend.ajaxProduct',compact('products'))->render();
         }
         
@@ -96,6 +97,8 @@ class ProductsController extends Controller
     public function show($id)
     {
         //
+        $product = Product::id($id)->get();
+        return $product;
     }
 
     /**
@@ -116,9 +119,28 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         //
+        $nameImage = null;
+
+        if($request->hasFile('fileImage')) {
+            $nameImage = time()."_".$request->file('fileImage')->getClientOriginalName();
+            $request->file('fileImage')->move(public_path('images'), $nameImage);
+        }
+
+        $update = Product::id($request->productId)->updateProduct($request->all(),$nameImage);
+
+        if(!$update){
+            return response()->json([
+                'status' => false
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'product' => $request->all()
+        ]);
     }
 
     /**

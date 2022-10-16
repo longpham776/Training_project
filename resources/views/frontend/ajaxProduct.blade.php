@@ -39,28 +39,29 @@
                 @forelse($products as $prod)
                 <tr id="product{{$prod->product_id}}">
                     <td scope="row">
-                        <h6>{{$prod->product_id}}</h6> <input class="form-control" type="hidden" readonly name="productId" value="{{$prod->product_id}}"></td>
+                        <h6 id="productId">{{ $prod->product_id }}</h6> <input class="form-control" type="hidden" readonly name="productId" value="{{$prod->product_id}}"></td>
                     <td>
-                        <h6>{{$prod->product_name}}</h6> <input class="form-control" type="hidden" name="name" value="{{$prod->product_name}}">
+                        <h6 id="name">{{ $prod->product_name }}</h6> <input class="form-control" type="hidden" name="name" value="{{$prod->product_name}}">
                     </td>
                     <td>
-                        <h6>{{$prod->description}}</h6> <input class="form-control" type="hidden" name="desciption" value="{{$prod->description}}">
+                        <h6 id="description" class="text-truncate" style="max-width: 100px;">{{ strip_tags($prod->description) }}</h6> <input class="form-control" type="hidden" name="description" value="{{$prod->description}}">
                     </td>
                     <td>
-                        <h6>{{$prod->product_price}}</h6> <input class="form-control" type="hidden" name="price" value="{{$prod->product_price}}">
+                        <h6 id="price" class="text-success">${{ $prod->product_price }}</h6> <input class="form-control" type="hidden" name="price" value="{{$prod->product_price}}">
                     </td>
                     <td>
                         @if($prod->is_sales == 1)
-                        <h6>Có hàng bán</h6>
+                        <h6 id="sale" class="text-success">Có hàng bán</h6>
                         @else
-                        <h6>Dừng bán</h6>
+                        <h6 id="sale" class="text-danger">Dừng bán</h6>
                         @endif
                         <input class="form-control" type="hidden" name="sale" value="{{$prod->id_sales}}">
                     </td>
                     <td>
                         <a name="editBtn" id="editBtn" class="editBtn text-dark" href="#"
-                        data-id="" role="button"><i class="fas fa-pencil-alt"></i></a>
-                        <a name="btnDelete" id="btnDelete" class="text-dark" href="#"
+                        data-toggle="modal" data-target="#modelId" data-url="{{route('products.show',['product'=>$prod->product_id])}}"
+                        data-id="{{$prod->product_id}}" role="button"><i class="fas fa-pencil-alt"></i></a>
+                        <a name="btnDelete" id="btnDelete" class="btnDelete text-dark" href="#" 
                         data-url="{{route('products.destroy',['product'=>$prod->product_id])}}"
                         data-id="{{$prod->product_id}}" data-name="{{$prod->product_name}}" role="button"><i class="fas fa-trash-alt"></i></a>
                     </td>

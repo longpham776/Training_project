@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = "product_id";
+    // protected $primaryKey = "product_id";
 
     protected $fillable = [
         'product_id',
@@ -30,7 +30,26 @@ class Product extends Model
     }
 
     public function scopeDefaultSort($query){
-        return $query->orderBy('product_id','desc');
+        return $query->orderBy('created_at','desc');
+    }
+
+    public function scopeUpdateProduct($query,$data,$nameImage){
+        if(!$nameImage){
+            return $query->update([
+                'product_name' => $data["name"],
+                'product_price' => $data["price"],
+                'description' => $data["description"],
+                'is_sales' => $data["sale"]
+            ]);
+        }
+
+        return $query->update([
+            'product_name' => $data["name"],
+            'product_image' => $nameImage,
+            'product_price' => $data["price"],
+            'description' => $data["desciption"],
+            'is_sales' => $data["sale"]
+        ]);
     }
 
     public function scopeParams($query,$searchData){

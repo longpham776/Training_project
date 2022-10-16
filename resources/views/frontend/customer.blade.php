@@ -19,6 +19,7 @@
             <input class="form-control mr-sm-2" type="text" name="nameSearch" value="" placeholder="Họ và tên">
             <input class="form-control mr-sm-2" type="text" name="emailSearch" value="" placeholder="Email">
             <select class="form-control" name="groupSearch" id="groupSearch">
+                <option value="">Tình trạng</option>
                 <option value="1">Đang hoạt động</option>
                 <option value="0">Tạm khóa</option>
             </select>

@@ -10,15 +10,102 @@
 var _this = this;
 var _require = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"),
   remove = _require.remove;
+$(document).on('click', '.editBtn', function () {
+  var productId = $(this).data('id');
+  var url = $(this).data('url');
+  $.ajax({
+    url: url,
+    method: "GET",
+    data: productId,
+    success: function success(data) {
+      console.log(data[0]);
+      $('.btnStore').hide();
+      $('.btnUpdate').show();
+      $('input[name=productId]').val(productId);
+      $('input[name=name]').val(data[0]['product_name']);
+      $('input[name=price]').val(data[0]['product_price']);
+      CKEDITOR.instances.description.setData(data[0]['description']);
+      if (data[0]['is_sales'] == 1) $('form#addProduct select').val(data[0]['is_sales']).change();else if (data[0]['is_sales'] == 0) $('form#addProduct select').val(data[0]['is_sales']).change();
+      if (data[0]['product_image'] != null) $('img[name=image]').attr('src', "http://".concat(location.host, "/Rcv_Project/public/images/").concat(data[0]['product_image']));else $('img[name=image]').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
+    },
+    error: function error() {
+      console.log("Fail get data product!");
+    }
+  });
+});
+$('.btnUpdate').on('click', function (e) {
+  e.preventDefault();
+  CKEDITOR.instances.description.updateElement();
+
+  // console.log(location.pathname);
+  // console.log($('#productId').val());
+
+  var productData = new FormData($('#addProduct')[0]);
+  var productId = $('#productId').val();
+  var url = "".concat(location.pathname, "/").concat(productId);
+  $.ajax({
+    url: url,
+    method: "POST",
+    data: productData,
+    contentType: false,
+    processData: false,
+    success: function success(_ref) {
+      var status = _ref.status,
+        product = _ref.product;
+      var h6 = $("#product".concat(productId, " h6"));
+      $.each(h6, function (index, value) {
+        var h6Id = $(value).attr('id');
+        if (h6Id == "sale") {
+          if (product[h6Id] == 1) {
+            $(value).text("Có hàng bán");
+            $(value).attr('class', 'text-success');
+          } else if (product[h6Id] == 0) {
+            $(value).text("Dừng bán");
+            $(value).attr('class', 'text-danger');
+          }
+          return true;
+        }
+        if (h6Id == "price") {
+          $(value).text("$".concat(product[h6Id]));
+          return true;
+        }
+        if (h6Id == "description") {
+          $(value).text($(product[h6Id]).text());
+          return true;
+        }
+
+        // console.log( index, $(value).text());
+
+        $(value).text(product[h6Id]);
+      });
+      $('#modelId').modal('hide');
+      $('#addProduct')[0].reset();
+    },
+    error: function error(_ref2) {
+      var responseJSON = _ref2.responseJSON;
+      // console.log(responseJSON);
+
+      // console.log(responseJSON.errors);
+
+      var errors = responseJSON.errors;
+      if (Object.getOwnPropertyNames(errors).length) {
+        $('form#addProduct input').each(function (index, value) {
+          var name = $(this).attr('name');
+          if (name && errors[name]) {
+            $(errors[name]).each(function (index, value) {
+              $(".error_".concat(name)).text(value);
+            });
+          } else $(".error_".concat(name)).text("");
+        });
+      }
+    }
+  });
+});
 $('#fileImage').change(function (e) {
   var files = e.target.files;
   var url = URL.createObjectURL(files[0]);
   $('#image').attr('src', url);
-
-  // console.log(files,url);
-  // console.log($('#image').attr('src'));
 });
-
 $('#btnClearImage').on('click', function (e) {
   $('#fileImage').val("");
   $('.error_fileImage').text("");
@@ -35,19 +122,19 @@ $('.btnStore').on('click', function (e) {
     data: addData,
     contentType: false,
     processData: false,
-    success: function success(_ref) {
-      var status = _ref.status,
-        html = _ref.html,
-        message = _ref.message;
+    success: function success(_ref3) {
+      var status = _ref3.status,
+        html = _ref3.html,
+        message = _ref3.message;
       if (status) {
         $('#listProduct').html(html);
         $('#modelId').modal('hide');
-        $('.addProduct')[0].reset();
+        $('#addProduct')[0].reset();
       }
       alert(message);
     },
-    error: function error(_ref2) {
-      var responseJSON = _ref2.responseJSON;
+    error: function error(_ref4) {
+      var responseJSON = _ref4.responseJSON;
       console.log(responseJSON);
       console.log(responseJSON.errors);
       var errors = responseJSON.errors;
@@ -65,7 +152,7 @@ $('.btnStore').on('click', function (e) {
     }
   });
 });
-$('#btnDelete').on('click', function (e) {
+$(document).on('click', '.btnDelete', function (e) {
   console.log($(this).data('id'), $(this).data('name'));
   var url = $(this).data('url');
   var product_id = $(this).data('id');
@@ -101,6 +188,7 @@ $('#btnSearch').on('click', function (e) {
   getData(1);
 });
 $(document).ready(function () {
+  $('.btnUpdate').hide();
   $(document).on('click', '.pagination a', function (event) {
     event.preventDefault();
     console.log('click pagination');
@@ -113,19 +201,24 @@ $(document).ready(function () {
 function getData(page) {
   // body...
   var searchData = $('.searchProduct').not(':button').serializeArray();
-  console.log(searchData);
   $.ajax({
     url: '?page=' + page,
     type: 'get',
     data: searchData,
     datatype: 'html'
-  }).done(function (data) {
-    $('#listProduct').html(data);
+  }).done(function (html) {
+    $('#listProduct').html(html);
     location.hash = page;
   }).fail(function (jqXHR, ajaxOptions, thrownError) {
     alert('No response from server');
   });
 }
+$('#btnAdd').on('click', function () {
+  $('.btnUpdate').hide();
+  $('.btnStore').show();
+  $('#addProduct')[0].reset();
+  $('img[name=image]').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
+});
 $('#exampleModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget);
   var modal = $(_this);
