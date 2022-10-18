@@ -30,7 +30,8 @@ class StoreCustomerRequest extends FormRequest
             'address' => 'required'
         ];
     }
-    public function messages(){
+    public function messages()
+    {
         return [
             'name.required' => 'Vui lòng nhập tên khách hàng',
             'name.min' => 'Tên khách hàng phải lớn hơn 5 ký tự',

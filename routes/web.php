@@ -16,34 +16,32 @@ use App\Http\Controllers\ProductsController;
 */
 
 
-Route::group(['namespace'=>'App\Http\Controllers'],function(){
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
     #Users
-    Route::get('/','UsersController@index')->name('home');
-    Route::get('/login','UsersController@login')->name('login');
-    Route::post('/postLogin','UsersController@postLogin')->name('postLogin');
-    Route::get('/logout','UsersController@logout')->name('logout');
-    
-    Route::get('/delete/{id}','UsersController@delete')->name('delete');
-    Route::get('/deact/{id}','UsersController@deact')->name('deact');
-    Route::post('/adduser','UsersController@addUser')->name('addUser');
-    Route::get('/getUser','UsersController@getUser')->name('getUser');
-    Route::post('/editUser','UsersController@editUser')->name('editUser');
+    Route::get('/', 'UsersController@index')->name('home');
+    Route::get('/login', 'UsersController@login')->name('login');
+    Route::post('/postLogin', 'UsersController@postLogin')->name('postLogin');
+    Route::get('/logout', 'UsersController@logout')->name('logout');
+
+    Route::get('/delete/{id}', 'UsersController@delete')->name('delete');
+    Route::get('/deact/{id}', 'UsersController@deact')->name('deact');
+    Route::post('/adduser', 'UsersController@addUser')->name('addUser');
+    Route::get('/getUser', 'UsersController@getUser')->name('getUser');
+    Route::post('/editUser', 'UsersController@editUser')->name('editUser');
 
     #Customers
-    Route::post('import','CustomerController@import')->name('customers.import');
+    Route::post('import', 'CustomerController@import')->name('customers.import');
 
-    Route::get('export-csv','CustomerController@exportCsv')->name('customers.export');
+    Route::get('export-csv', 'CustomerController@exportCsv')->name('customers.export');
 
     Route::resource('customers', CustomerController::class)->except([
-        'create','edit'
+        'create', 'edit'
     ]);
 
     #Products
-    Route::post('products/{product}','ProductsController@update')->name('products.update');
+    Route::post('products/{product}', 'ProductsController@update')->name('products.update');
 
     Route::resource('products', ProductsController::class)->except([
-        'create','edit','update'
+        'create', 'edit', 'update'
     ]);
 });
-
-

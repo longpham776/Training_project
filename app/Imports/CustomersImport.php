@@ -31,25 +31,18 @@ class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettin
 
     public function collection(Collection $rows)
     {
-      
-        Log::info("abc", [$rows]);
 
-        $abc = $rows->map(function ($item, $key) {
-        Log::info("item",[$item]);
+        $customer = $rows->map(function ($item, $key) {
 
             return [
-                    'customer_name' => $item[0],
-                    'email' => $item[1],
-                    'tel_num' => $item[2],
-                    'address' => $item[3],
-                    'is_active' => $item[4]
+                'customer_name' => $item[0],
+                'email' => $item[1],
+                'tel_num' => $item[2],
+                'address' => $item[3]
             ];
         });
-         
 
-        Log::info("test",$abc->toArray());
-        Customer::insert($abc->toArray());
-        
+        Customer::insert($customer->toArray());
     }
 
     public function customValidationAttributes()
@@ -71,5 +64,4 @@ class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettin
             '3' => 'required'
         ];
     }
-
 }

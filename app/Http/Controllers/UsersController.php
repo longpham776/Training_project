@@ -146,7 +146,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function editUser(Request $request)  
+    public function editUser(Request $request)
     {
         if (session('users')->email == $request->email)
             return redirect()->route('home')->with('fail', 'Không thể edit trên tài khoản đăng nhập.');

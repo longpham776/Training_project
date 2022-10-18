@@ -2,7 +2,7 @@
     <div class="row-sm">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-            {{$customers->links()}}
+                {{$customers->links()}}
             </ul>
         </nav>
     </div>
@@ -17,10 +17,22 @@
         </button>
     </div>
     @endif
-
-    @if(session('fail'))
+    
+    @if( session('arr_messFail') )
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>Sorry!</strong> {{session('fail')}}
+        <strong>Sorry! Can't Import File</strong><br>
+        @foreach( session('arr_messFail') as $row => $errors)
+        <span class="text-danger">Dòng {{ $row }}: {{ $errors }} </span><br>
+        @endforeach
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
+
+    @if( session('fail') )
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Sorry!</strong>{{ session('fail') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -45,7 +57,8 @@
                     <tr class="customer{{$cus->customer_id}}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }} " hidden />
                         <td scope="row">
-                            <h6>{{$cus->customer_id}}</h6> <input class="form-control" type="hidden" readonly name="customerId" value="{{$cus->customer_id}}"></td>
+                            <h6>{{$cus->customer_id}}</h6> <input class="form-control" type="hidden" readonly name="customerId" value="{{$cus->customer_id}}">
+                        </td>
                         <td>
                             <h6>{{$cus->customer_name}}</h6> <input class="form-control" type="hidden" name="name" value="{{$cus->customer_name}}">
                             <span style="color:red;" class="error_name"></span><br>
@@ -63,11 +76,8 @@
                             <span style="color:red;" class="error_phone"></span><br>
                         </td>
                         <td>
-                            <a name="editBtn" id="editBtn" class="editBtn text-dark" href="#"
-                            data-id="{{$cus->customer_id}}" role="button"><i class="fas fa-pencil-alt"></i></a>
-                            <a name="editSaveBtn" id="editSaveBtn" class="editSaveBtn text-dark d-none" href="#"
-                            data-url="{{route('customers.update', ['customer' => $cus->customer_id])}}"
-                            data-id="{{$cus->customer_id}}" role="button"><i class="fas fa-save"></i></a>
+                            <a name="editBtn" id="editBtn" class="editBtn text-dark" href="#" data-id="{{$cus->customer_id}}" role="button"><i class="fas fa-pencil-alt"></i></a>
+                            <a name="editSaveBtn" id="editSaveBtn" class="editSaveBtn text-dark d-none" href="#" data-url="{{route('customers.update', ['customer' => $cus->customer_id])}}" data-id="{{$cus->customer_id}}" role="button"><i class="fas fa-save"></i></a>
                         </td>
                     </tr>
                 </form>
@@ -84,7 +94,7 @@
     <div class="row-sm">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
-            {{$customers->links()}}
+                {{$customers->links()}}
             </ul>
         </nav>
     </div>

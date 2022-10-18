@@ -9,6 +9,7 @@ use App\Imports\CustomersImport;
 use Illuminate\Http\Request;
 use App\Models\Customer;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -33,7 +34,6 @@ class CustomerController extends Controller
             // dd($customers, $request->all());
             return view('frontend.ajaxCustomer', compact('customers'))->render();
         }
-
 
         // list 
         return view('frontend.customer', compact('customers'));
@@ -126,14 +126,16 @@ class CustomerController extends Controller
     {
         try {
             Excel::import(new CustomersImport, request()->file('file'));
-            return redirect()->back()->with('success', 'Thêm file CSV thành công!');
+            return redirect()->with('success', 'Thêm file CSV thành công!');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
-            
+
             // dd($failures);
 
+            $arr_messFail = [];
+
             foreach ($failures as $failure) {
-               
+
                 Log::info("error", [
                     $failure->row(), // row that went wrong
                     $failure->attribute(), // either heading key (if using heading row concern) or column index
@@ -141,14 +143,27 @@ class CustomerController extends Controller
                     $failure->values(), // The values of the row that has failed.
                 ]);
 
+                // if (!$arr_messFail) {
 
+                //     $arr_messFail = Arr::add($arr_messFail, $failure->row(), [$failure->errors()]);
+                // } else {
+                //     if (array_key_exists($failure->row(), $arr_messFail)) {
+
+                //         array_push($arr_messFail[$failure->row()],$failure->errors());
+                //     } else {
+
+                //         $arr_messFail = Arr::add($arr_messFail, $failure->row(), [$failure->errors()]);
+                //     }
+                // }
+
+                $msg_error = !empty($arr_messFail[$failure->row()]) ? $arr_messFail[$failure->row()] : '';
+
+                $arr_messFail[$failure->row()] =  trim($msg_error . ', ' . implode(', ', $failure->errors()), ', ');
             }
-            
 
-            $grouped = collect($failures)->mapWithKeys(function ($failure, $key) {
-                return $failure->row();
-            });
-            dd($grouped);
+            // dd($arr_messFail);
+
+            return redirect()->back()->with(compact('arr_messFail'));
         }
     }
 

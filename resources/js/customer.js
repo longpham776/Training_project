@@ -108,12 +108,12 @@ $(document).on('click', '.editSaveBtn', function (e) {
     });
 });
 
-$('.btnCancelAddCustomer').on('click',function(){
+$('.btnCancelAddCustomer').on('click', function () {
     $('.addCustomer')[0].reset();
     $('form.addCustomer span').text("");
 });
 
-$('.close').on('click',function(){
+$('.close').on('click', function () {
     $('.addCustomer')[0].reset();
     $('form.addCustomer span').text("");
 });
@@ -137,11 +137,11 @@ $('.btnAddCustomer').on('click', function (e) {
         success: function ({ status, html }) {
             console.log("success");
             if (status) {
-                
+
                 $('#listCustomer').html(html);
-                
+
                 $('#modelId').modal('hide');
-                
+
                 $('.addCustomer')[0].reset();
 
                 alert("Thêm khách hàng thành công!");
