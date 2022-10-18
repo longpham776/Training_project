@@ -267,6 +267,11 @@ $(document).on('click', '.btnDelete', function (e) {
     });
 });
 
+$('#btnClear').on('click', function () {
+    $('.searchProduct')[0].reset();
+    getData(1);
+});
+
 $('#btnSearch').on('click', function (e) {
 
     e.preventDefault();
@@ -307,6 +312,16 @@ function getData(page) {
         alert('No response from server');
     });
 }
+
+// $('.btnCancel').on('click', function () {
+//     $('#addProduct')[0].reset();
+//     $('#addProduct span').text("");
+// });
+
+// $('.close').on('click', function () {
+//     $('#addProduct')[0].reset();
+//     $('#addProduct span').text("");
+// });
 
 $('#btnAdd').on('click', function () {
     $('.btnUpdate').hide();

@@ -6,12 +6,18 @@ use App\Models\Customer;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettings, WithValidation
+class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettings, WithValidation, SkipsEmptyRows
 {
+    use Importable;
+
+    private $data = [];
+
     public function startRow(): int
     {
         return 2;
@@ -23,6 +29,7 @@ class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettin
             'delimiter' => ','
         ];
     }
+    
     /**
      * @param array $row
      *

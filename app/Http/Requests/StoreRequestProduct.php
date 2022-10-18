@@ -42,7 +42,7 @@ class StoreRequestProduct extends FormRequest
             'fileImage.image' => 'Chỉ cho upload các file hình *.png, *.jpg, *.jpeg',
             'fileImage.mimes' => 'Chỉ cho upload các file hình *.png, *.jpg, *.jpeg',
             'fileImage.max' => 'Dung lượng không quá 2Mb',
-            'fileImage.dimensions' => 'Kích thước không quá 1024px'
+            'fileImage.dimensions' => 'Tệp có kích thước hình ảnh lớn hơn 1024px.'
         ];
     }
 }

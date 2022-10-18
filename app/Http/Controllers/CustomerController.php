@@ -13,6 +13,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class CustomerController extends Controller
 {
@@ -126,8 +127,8 @@ class CustomerController extends Controller
     {
         try {
             Excel::import(new CustomersImport, request()->file('file'));
-            return redirect()->with('success', 'Thêm file CSV thành công!');
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            return redirect()->route('customers.index')->with('success', 'Thêm file CSV thành công!');
+        } catch (ValidationException $e) {
             $failures = $e->failures();
 
             // dd($failures);
@@ -142,19 +143,6 @@ class CustomerController extends Controller
                     $failure->errors(), // Actual error messages from Laravel validator
                     $failure->values(), // The values of the row that has failed.
                 ]);
-
-                // if (!$arr_messFail) {
-
-                //     $arr_messFail = Arr::add($arr_messFail, $failure->row(), [$failure->errors()]);
-                // } else {
-                //     if (array_key_exists($failure->row(), $arr_messFail)) {
-
-                //         array_push($arr_messFail[$failure->row()],$failure->errors());
-                //     } else {
-
-                //         $arr_messFail = Arr::add($arr_messFail, $failure->row(), [$failure->errors()]);
-                //     }
-                // }
 
                 $msg_error = !empty($arr_messFail[$failure->row()]) ? $arr_messFail[$failure->row()] : '';
 
