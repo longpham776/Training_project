@@ -15,8 +15,9 @@ use App\Http\Controllers\ProductsController;
 |
 */
 
-#Users
+
 Route::group(['namespace'=>'App\Http\Controllers'],function(){
+    #Users
     Route::get('/','UsersController@index')->name('home');
     Route::get('/login','UsersController@login')->name('login');
     Route::post('/postLogin','UsersController@postLogin')->name('postLogin');
@@ -27,11 +28,8 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::post('/adduser','UsersController@addUser')->name('addUser');
     Route::get('/getUser','UsersController@getUser')->name('getUser');
     Route::post('/editUser','UsersController@editUser')->name('editUser');
-});
 
-#Customers
-Route::group(['namespace'=>'App\Http\Controllers'],function(){
-    
+    #Customers
     Route::post('import','CustomerController@import')->name('customers.import');
 
     Route::get('export-csv','CustomerController@exportCsv')->name('customers.export');
@@ -39,11 +37,8 @@ Route::group(['namespace'=>'App\Http\Controllers'],function(){
     Route::resource('customers', CustomerController::class)->except([
         'create','edit'
     ]);
-});
 
-#Products
-Route::group(['namespace'=>'App\Http\Controllers'],function(){
-
+    #Products
     Route::post('products/{product}','ProductsController@update')->name('products.update');
 
     Route::resource('products', ProductsController::class)->except([

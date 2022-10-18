@@ -6,7 +6,7 @@ use App\Http\Requests\StoreRequestProduct;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Cookie;
 
 class ProductsController extends Controller
 {
@@ -17,15 +17,19 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
+
+        if (!Cookie::get('user') && !session()->has('users')) {
+            return redirect()->route('login');
+        }
         //
         $products = Product::simple()->defaultSort()->params($request->all())->paginate(5);
         // dd($products);
-        if($request->ajax()){
+        if ($request->ajax()) {
 
-            return view('frontend.ajaxProduct',compact('products'))->render();
+            return view('frontend.ajaxProduct', compact('products'))->render();
         }
 
-        return view('frontend.product',compact('products'));
+        return view('frontend.product', compact('products'));
     }
 
     /**
@@ -47,22 +51,25 @@ class ProductsController extends Controller
     public function store(StoreRequestProduct $request)
     {
         //
-        
+
         // dd($request->all());
 
         $nameImage = null;
-        
-        $autoIdProduct = strtoupper(
-            substr($request->name,0,1)
-            ).str_pad(
-                Product::count()+1,11-strlen(Product::count()+1),'0',STR_PAD_LEFT
-            );
 
-        if($request->hasFile('fileImage')) {
-            $nameImage = time()."_".$request->file('fileImage')->getClientOriginalName();
+        $autoIdProduct = strtoupper(
+            substr($request->name, 0, 1)
+        ) . str_pad(
+            Product::count() + 1,
+            11 - strlen(Product::count() + 1),
+            '0',
+            STR_PAD_LEFT
+        );
+
+        if ($request->hasFile('fileImage')) {
+            $nameImage = time() . "_" . $request->file('fileImage')->getClientOriginalName();
             $request->file('fileImage')->move(public_path('images'), $nameImage);
         }
-        
+
         $store = Product::create([
             'product_id' => $autoIdProduct,
             'product_name' => $request->name,
@@ -73,12 +80,12 @@ class ProductsController extends Controller
         ]);
 
         $html = null;
-        
-        if($store){
+
+        if ($store) {
             $products = Product::simple()->defaultSort()->params($request->all())->paginate(5);
-            $html = view('frontend.ajaxProduct',compact('products'))->render();
+            $html = view('frontend.ajaxProduct', compact('products'))->render();
         }
-        
+
         return response()->json([
             asset("images/$nameImage"),
             201,
@@ -124,14 +131,14 @@ class ProductsController extends Controller
         //
         $nameImage = null;
 
-        if($request->hasFile('fileImage')) {
-            $nameImage = time()."_".$request->file('fileImage')->getClientOriginalName();
+        if ($request->hasFile('fileImage')) {
+            $nameImage = time() . "_" . $request->file('fileImage')->getClientOriginalName();
             $request->file('fileImage')->move(public_path('images'), $nameImage);
         }
 
-        $update = Product::id($request->productId)->updateProduct($request->all(),$nameImage);
+        $update = Product::id($request->productId)->updateProduct($request->all(), $nameImage);
 
-        if(!$update){
+        if (!$update) {
             return response()->json([
                 'status' => false
             ]);
@@ -153,8 +160,8 @@ class ProductsController extends Controller
     {
         //
         $delete = Product::id($id)->delete();
-        
-        if(!$delete){
+
+        if (!$delete) {
             return response()->json([
                 'mess' => 'Delete không thành công'
             ]);

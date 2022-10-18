@@ -99,12 +99,12 @@
                                         <span style="color:red;">{{$message}}</span><br>
                                         @enderror
                                         <label><strong>Mật khẩu</strong></label>
-                                        <input type="text" class="form-control" name="password" id="password" aria-describedby="helpId" placeholder="Nhập mật khẩu">
+                                        <input type="password" class="form-control" name="password" id="password" aria-describedby="helpId" placeholder="Nhập mật khẩu">
                                         @error('password')
                                         <span style="color:red;">{{$message}}</span><br>
                                         @enderror
                                         <label><strong>Xác nhận</strong></label>
-                                        <input type="text" class="form-control" name="password_confirmation" id="password_confirmation" aria-describedby="helpId" placeholder="Nhập xác nhận">
+                                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" aria-describedby="helpId" placeholder="Nhập xác nhận">
                                         <label><strong>Nhóm</strong></label>
                                         <select class="form-control" name="group" id="group">
                                             <option value="Admin">Admin</option>
@@ -167,7 +167,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($users as $u)
+                    @forelse($users as $u)
                     <tr>
                         <td scope="row">{{$u->id}}</td>
                         <td>{{$u->name}}</td>
@@ -187,7 +187,11 @@
                             onclick="if (confirm('Are you sure to deactive {{$u->name}}')) commentDelete(1); return false" role="button"><i class="fas fa-user-minus"></i></a>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td class="text-center" colspan="6"><strong>Not found</strong></td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

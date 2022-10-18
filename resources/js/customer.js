@@ -1,9 +1,14 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('form.editCustomer span').hide();
 });
 
-$('#btnSearch').on('click',function(e){
-    
+$('#btnClear').on('click', function () {
+    $('.searchCustomer')[0].reset();
+    getData(1);
+});
+
+$('#btnSearch').on('click', function (e) {
+
     e.preventDefault();
 
     let searchData = $('.searchCustomer input').serializeArray();
@@ -13,7 +18,7 @@ $('#btnSearch').on('click',function(e){
     getData(1);
 });
 
-$(document).on('click', '.editBtn',function(e){
+$(document).on('click', '.editBtn', function (e) {
 
     e.preventDefault();
 
@@ -25,18 +30,18 @@ $(document).on('click', '.editBtn',function(e){
 
     $('.editBtn').hide();
 
-    $(`.customer${customerId} .editSaveBtn`).attr('class','editSaveBtn text-dark');
+    $(`.customer${customerId} .editSaveBtn`).attr('class', 'editSaveBtn text-dark');
 
     $(`.customer${customerId} h6`).hide();
 
-    $(`.customer${customerId} input`).attr('type','text');
+    $(`.customer${customerId} input`).attr('type', 'text');
 
 });
 
-$(document).on('click','.editSaveBtn', function(e){
+$(document).on('click', '.editSaveBtn', function (e) {
 
     e.preventDefault();
-    
+
     // console.log("close edit");
 
     let customerId = $(this).data('id');
@@ -48,72 +53,72 @@ $(document).on('click','.editSaveBtn', function(e){
     $.ajax({
 
         url: $(this).data('url'),
-        method:"PUT",
+        method: "PUT",
         data: customerData,
 
-        success: function({status,customer}){
+        success: function ({ status, customer }) {
 
-            console.log(status,customer);
+            console.log(status, customer);
 
             let inputs = $(`.customer${customerId}`).find(`input`).not(':hidden');
 
             console.log(inputs);
-            
 
-            $.each ( inputs, function (indexes, input){
+
+            $.each(inputs, function (indexes, input) {
                 // console.log(input);
-                
+
                 let inputName = $(input).attr('name');
-                
+
                 // console.log(inputName);
 
                 $(input).prev().text(customer[inputName]);
 
             });
 
-            
+
             $('.editBtn').show();
 
-            $(`.customer${customerId} .editSaveBtn`).attr('class','editSaveBtn text-dark d-none');
+            $(`.customer${customerId} .editSaveBtn`).attr('class', 'editSaveBtn text-dark d-none');
 
             $(`.customer${customerId} td h6`).show();
 
             $(`.customer${customerId} span`).text("");
 
-            $(`.customer${customerId} input`).attr('type','hidden');
+            $(`.customer${customerId} input`).attr('type', 'hidden');
         },
 
-        error: function({responseJSON}){
+        error: function ({ responseJSON }) {
 
             let errors = responseJSON.errors;
 
-            // console.log("response",responseJSON);
+            $(`.customer${customerId} input:not(:hidden)`).each(function (index, value) {
 
-            // console.log($(`.customer${customerId} input`));
-
-            $(`.customer${customerId} input:not(:hidden)`).each(function(index,value){
-                
                 var name = $(this).attr('name');
 
-                // console.log(name);
+                if (name && errors[name]) {
 
-                // console.log(errors)
-
-                if(name && errors[name]) {
-
-                    // console.log(errors[name]);
-                    
-                    $(errors[name]).each(function(index,value){
+                    $(errors[name]).each(function (index, value) {
                         $(`.customer${customerId} .error_${name}`).text(value);
                     });
 
-                }else   $(`.customer${customerId} .error_${name}`).text("");
+                } else $(`.customer${customerId} .error_${name}`).text("");
             });
         }
     });
 });
 
-$('.btnAddCustomer').on('click',function(e){
+$('.btnCancelAddCustomer').on('click',function(){
+    $('.addCustomer')[0].reset();
+    $('form.addCustomer span').text("");
+});
+
+$('.close').on('click',function(){
+    $('.addCustomer')[0].reset();
+    $('form.addCustomer span').text("");
+});
+
+$('.btnAddCustomer').on('click', function (e) {
 
     e.preventDefault();
 
@@ -121,52 +126,57 @@ $('.btnAddCustomer').on('click',function(e){
 
     let formData = $('form.addCustomer').serializeArray();
 
-    console.log('formData',formData);
+    let url = `${location.pathname}`;
 
     $.ajax({
 
-        url:"{{url('/customers')}}",
-        method:"POST",
-        data:formData,
+        url: url,
+        method: "POST",
+        data: formData,
 
-        success: function({status, html}){
+        success: function ({ status, html }) {
             console.log("success");
-            if(status) {
+            if (status) {
+                
                 $('#listCustomer').html(html);
+                
                 $('#modelId').modal('hide');
+                
                 $('.addCustomer')[0].reset();
+
+                alert("Thêm khách hàng thành công!");
             }
         },
 
-        error: function({responseJSON}){
+        error: function ({ responseJSON }) {
 
             let errors = responseJSON.errors;
 
-            if(Object.getOwnPropertyNames(errors).length){
+            if (Object.getOwnPropertyNames(errors).length) {
 
-                $('form.addCustomer input').each(function(index, value) {
+                $('form.addCustomer input').each(function (index, value) {
 
                     // console.log(`name`, $(this).attr('name'));
 
                     var name = $(this).attr('name');
 
-                    if(name && errors[name]) {
+                    if (name && errors[name]) {
                         // console.log(errors[name]);
                         // console.log($(`#error_${name}`).text("test"));
-                        $(errors[name]).each(function(index,value){
-                            $(`.error_${name}`).text(value);
+                        $(errors[name]).each(function (index, value) {
+                            $(`form.addCustomer .error_${name}`).text(value);
                         });
-                    }else   $(`.error_${name}`).text("");
+                    } else $(`form.addCustomer .error_${name}`).text("");
                 });
             }
 
-            
+
         }
     });
 });
 
-$(document).ready(function(){
-    $(document).on('click','.pagination a',function(event){
+$(document).ready(function () {
+    $(document).on('click', '.pagination a', function (event) {
         event.preventDefault();
 
         $('li').removeClass('active');
@@ -182,14 +192,14 @@ function getData(page) {
     // body...
     let searchData = $('.searchCustomer input').serializeArray();
     $.ajax({
-        url : '?page=' + page,
-        type : 'get',
+        url: '?page=' + page,
+        type: 'get',
         data: searchData,
-        datatype : 'html',
-    }).done(function(data){
+        datatype: 'html',
+    }).done(function (data) {
         $('#listCustomer').html(data);
         location.hash = page;
-    }).fail(function(jqXHR,ajaxOptions,thrownError){
+    }).fail(function (jqXHR, ajaxOptions, thrownError) {
         alert('No response from server');
     });
 }
@@ -198,5 +208,5 @@ $('#exampleModal').on('show.bs.modal', event => {
     var button = $(event.relatedTarget);
     var modal = $(this);
     // Use above variables to manipulate the DOM
-    
+
 });

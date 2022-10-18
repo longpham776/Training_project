@@ -29,7 +29,6 @@ class UpdateCustomerRequest extends FormRequest
             'name' => 'required|min:5',
             // 'email' => 'sometimes|required|email|unique:customers,email,'.$this->customerId,
             'email' => [
-                'sometimes',
                 'required',
                 'email' => Rule::unique('customers','email')->ignore($this->customerId, 'customer_id'),
             ],

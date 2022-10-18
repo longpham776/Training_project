@@ -27,7 +27,7 @@
             <input class="form-control mr-sm-2" type="text" name="addressSearch" value="" placeholder="Địa chỉ">
             &ensp;
             <button class="btn btn-outline-light my-2 my-sm-0" id="btnSearch" type="submit"><i class="fa fa-search" aria-hidden="true"></i> Search</button> &ensp;
-            <button class="btn btn-outline-danger my-2 my-sm-0" id="btnClear" type="submit">Clear</button>
+            <button class="btn btn-outline-danger my-2 my-sm-0" id="btnClear" type="button">Clear</button>
         </form>
     </div>
 </nav>
@@ -55,17 +55,17 @@
             <button type="button" id="" class="btn btn-secondary btn-xl">
                 <i class="fa fa-upload" aria-hidden="true"> <a class="text-decoration-none text-white" href="{{route('customers.export')}}">Export CSV</a></i>
             </button>
-            
-            
+
+
             <!-- Modal -->
             <div class="modal fade" id="modelImport" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Import CSV</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                         <form action="{{route('customers.import')}}" method="post" enctype="multipart/form-data">
                             @csrf
@@ -125,7 +125,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- <div id="listCustomer">
 
             <div class="row-sm">

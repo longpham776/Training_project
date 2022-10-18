@@ -11,6 +11,10 @@ var _this = this;
 $(document).ready(function () {
   $('form.editCustomer span').hide();
 });
+$('#btnClear').on('click', function () {
+  $('.searchCustomer')[0].reset();
+  getData(1);
+});
 $('#btnSearch').on('click', function (e) {
   e.preventDefault();
   var searchData = $('.searchCustomer input').serializeArray();
@@ -68,21 +72,9 @@ $(document).on('click', '.editSaveBtn', function (e) {
     error: function error(_ref2) {
       var responseJSON = _ref2.responseJSON;
       var errors = responseJSON.errors;
-
-      // console.log("response",responseJSON);
-
-      // console.log($(`.customer${customerId} input`));
-
       $(".customer".concat(customerId, " input:not(:hidden)")).each(function (index, value) {
         var name = $(this).attr('name');
-
-        // console.log(name);
-
-        // console.log(errors)
-
         if (name && errors[name]) {
-          // console.log(errors[name]);
-
           $(errors[name]).each(function (index, value) {
             $(".customer".concat(customerId, " .error_").concat(name)).text(value);
           });
@@ -91,13 +83,21 @@ $(document).on('click', '.editSaveBtn', function (e) {
     }
   });
 });
+$('.btnCancelAddCustomer').on('click', function () {
+  $('.addCustomer')[0].reset();
+  $('form.addCustomer span').text("");
+});
+$('.close').on('click', function () {
+  $('.addCustomer')[0].reset();
+  $('form.addCustomer span').text("");
+});
 $('.btnAddCustomer').on('click', function (e) {
   e.preventDefault();
   $('form.addCustomer span').text("");
   var formData = $('form.addCustomer').serializeArray();
-  console.log('formData', formData);
+  var url = "".concat(location.pathname);
   $.ajax({
-    url: "{{url('/customers')}}",
+    url: url,
     method: "POST",
     data: formData,
     success: function success(_ref3) {
@@ -108,6 +108,7 @@ $('.btnAddCustomer').on('click', function (e) {
         $('#listCustomer').html(html);
         $('#modelId').modal('hide');
         $('.addCustomer')[0].reset();
+        alert("Thêm khách hàng thành công!");
       }
     },
     error: function error(_ref4) {
@@ -122,9 +123,9 @@ $('.btnAddCustomer').on('click', function (e) {
             // console.log(errors[name]);
             // console.log($(`#error_${name}`).text("test"));
             $(errors[name]).each(function (index, value) {
-              $(".error_".concat(name)).text(value);
+              $("form.addCustomer .error_".concat(name)).text(value);
             });
-          } else $(".error_".concat(name)).text("");
+          } else $("form.addCustomer .error_".concat(name)).text("");
         });
       }
     }
