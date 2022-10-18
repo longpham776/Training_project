@@ -69,7 +69,7 @@ class UsersController extends Controller
                 ->where('email', $users->email)
                 ->update(['remember_token' => $remem_token]);
 
-            Cookie::queue('user', $remem_token, 1);
+            Cookie::queue('user', $remem_token, 60*24);
         }
 
         session()->put('users', $users);

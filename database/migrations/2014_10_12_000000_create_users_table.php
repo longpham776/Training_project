@@ -15,11 +15,17 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->bigInteger('id');
+            $table->string('name',255)->nullable(false);
+            $table->string('email',255)->unique()->nullable(false);
+            $table->string('password',255)->nullable(false);
+            $table->rememberToken()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->tinyInteger('is_active')->default(1)->nullable(false)->comment('0: Không hoạt động, 1: Hoạt động');
+            $table->tinyInteger('is_delete')->default(0)->nullable(false)->comment('0: Bình thường, 1: Đã xóa');
+            $table->string('group_role',50)->nullable();
+            $table->timestamp('last_login_at')->nullable(false);
+            $table->string('last_login_ip',40)->nullable(false);
             $table->timestamps();
         });
     }

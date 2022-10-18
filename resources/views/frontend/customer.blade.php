@@ -1,7 +1,7 @@
 @extends('frontend.masterview')
 @section('content')
 <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
-    <a class="navbar-brand" href="#"><i class="fas fa-user-circle"></i> Admin</a>
+    <a class="navbar-brand" href="Javascript:void(0)"><i class="fas fa-user-circle"></i> Admin</a>
     <div class="collapse navbar-collapse" id="collapsibleNavId">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
