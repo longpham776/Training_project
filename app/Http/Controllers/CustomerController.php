@@ -29,7 +29,7 @@ class CustomerController extends Controller
             return redirect()->route('login');
         }
 
-        $customers = Customer::active()->simple()->defaultSort()->params($request->all())->paginate(5);
+        $customers = Customer::simple()->defaultSort()->params($request->all())->paginate(5);
 
         if ($request->ajax()) {
             // dd($customers, $request->all());
