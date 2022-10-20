@@ -48,64 +48,91 @@ $(document).on('click', '.editSaveBtn', function (e) {
 
     let customerData = $(`.customer${customerId} input`).serializeArray();
 
-    // console.log("CustomerData",customerData);
+    let url = $(this).data('url');
 
-    $.ajax({
+    console.log(url);
 
-        url: $(this).data('url'),
-        method: "PUT",
-        data: customerData,
+    console.log("New data!");
 
-        success: function ({ status, customer }) {
+    $.each(customerData, function (index, value) {
 
-            console.log(status, customer);
+        let newValue = value['value'];
 
-            let inputs = $(`.customer${customerId}`).find(`input`).not(':hidden');
+        let oldValue = $(`.customer${customerId} h6#${value['name']}`).text();
 
-            console.log(inputs);
+        if (!index) return;
 
+        if (newValue != oldValue) {
+            console.log("Value not equal! return Ajax", value['name']);
 
-            $.each(inputs, function (indexes, input) {
-                // console.log(input);
+            $.ajax({
 
-                let inputName = $(input).attr('name');
+                url: url,
+                method: "PUT",
+                data: customerData,
 
-                // console.log(inputName);
+                success: function ({ status, customer }) {
 
-                $(input).prev().text(customer[inputName]);
+                    console.log(status, customer);
 
-            });
+                    $.each(customer,function(index,value){
+                        console.log(index,value);
+                        
+                        if(index == "_token")   return;
 
-
-            $('.editBtn').show();
-
-            $(`.customer${customerId} .editSaveBtn`).attr('class', 'editSaveBtn text-dark d-none');
-
-            $(`.customer${customerId} td h6`).show();
-
-            $(`.customer${customerId} span`).text("");
-
-            $(`.customer${customerId} input`).attr('type', 'hidden');
-        },
-
-        error: function ({ responseJSON }) {
-
-            let errors = responseJSON.errors;
-
-            $(`.customer${customerId} input:not(:hidden)`).each(function (index, value) {
-
-                var name = $(this).attr('name');
-
-                if (name && errors[name]) {
-
-                    $(errors[name]).each(function (index, value) {
-                        $(`.customer${customerId} .error_${name}`).text(value);
+                        $(`.customer${customerId} h6#${index}`).text(value);
                     });
 
-                } else $(`.customer${customerId} .error_${name}`).text("");
+                    $('.editBtn').show();
+
+                    $(`.customer${customerId} .editSaveBtn`).attr('class', 'editSaveBtn text-dark d-none');
+
+                    $(`.customer${customerId} td h6`).show();
+
+                    $(`.customer${customerId} span`).text("");
+
+                    $(`.customer${customerId} input`).attr('type', 'hidden');
+
+                },
+
+                error: function ({ responseJSON }) {
+
+                    let errors = responseJSON.errors;
+
+                    $(`.customer${customerId} input:not(:hidden)`).each(function (index, value) {
+
+                        var name = $(this).attr('name');
+
+                        if (name && errors[name]) {
+
+                            $(errors[name]).each(function (index, value) {
+                                $(`.customer${customerId} .error_${name}`).text(value);
+                            });
+
+                        } else $(`.customer${customerId} .error_${name}`).text("");
+                    });
+                    
+                }
             });
+
+            return false;
         }
+
+        console.log("Value equal!", value['name']);
     });
+
+    console.log("not return ajax!");
+
+    $('.editBtn').show();
+
+    $(`.customer${customerId} .editSaveBtn`).attr('class', 'editSaveBtn text-dark d-none');
+
+    $(`.customer${customerId} td h6`).show();
+
+    $(`.customer${customerId} span`).text("");
+
+    $(`.customer${customerId} input`).attr('type', 'hidden');
+
 });
 
 $('.btnCancelAddCustomer').on('click', function () {

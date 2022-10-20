@@ -57,22 +57,22 @@
                     <tr class="customer{{$cus->customer_id}}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }} " hidden />
                         <td scope="row">
-                            <h6>{{$cus->customer_id}}</h6> <input class="form-control" type="hidden" readonly name="customerId" value="{{$cus->customer_id}}">
+                            <h6 id="customerId">{{$cus->customer_id}}</h6> <input class="form-control" type="hidden" readonly name="customerId" value="{{$cus->customer_id}}">
                         </td>
                         <td>
-                            <h6>{{$cus->customer_name}}</h6> <input class="form-control" type="hidden" name="name" value="{{$cus->customer_name}}">
+                            <h6 id="name">{{$cus->customer_name}}</h6> <input class="form-control" type="hidden" name="name" value="{{$cus->customer_name}}">
                             <span style="color:red;" class="error_name"></span><br>
                         </td>
                         <td>
-                            <h6>{{$cus->email}}</h6> <input class="form-control" type="hidden" name="email" value="{{$cus->email}}">
+                            <h6 id="email">{{$cus->email}}</h6> <input class="form-control" type="hidden" name="email" value="{{$cus->email}}">
                             <span style="color:red;" class="error_email"></span><br>
                         </td>
                         <td>
-                            <h6>{{$cus->address}}</h6> <input class="form-control" type="hidden" name="address" value="{{$cus->address}}">
+                            <h6 id="address">{{$cus->address}}</h6> <input class="form-control" type="hidden" name="address" value="{{$cus->address}}">
                             <span style="color:red;" class="error_address"></span><br>
                         </td>
                         <td>
-                            <h6>{{$cus->tel_num}}</h6> <input class="form-control" type="hidden" name="phone" value="{{$cus->tel_num}}">
+                            <h6 id="phone">{{$cus->tel_num}}</h6> <input class="form-control" type="hidden" name="phone" value="{{$cus->tel_num}}">
                             <span style="color:red;" class="error_phone"></span><br>
                         </td>
                         <td>

@@ -41,47 +41,57 @@ $(document).on('click', '.editSaveBtn', function (e) {
 
   var customerId = $(this).data('id');
   var customerData = $(".customer".concat(customerId, " input")).serializeArray();
-
-  // console.log("CustomerData",customerData);
-
-  $.ajax({
-    url: $(this).data('url'),
-    method: "PUT",
-    data: customerData,
-    success: function success(_ref) {
-      var status = _ref.status,
-        customer = _ref.customer;
-      console.log(status, customer);
-      var inputs = $(".customer".concat(customerId)).find("input").not(':hidden');
-      console.log(inputs);
-      $.each(inputs, function (indexes, input) {
-        // console.log(input);
-
-        var inputName = $(input).attr('name');
-
-        // console.log(inputName);
-
-        $(input).prev().text(customer[inputName]);
-      });
-      $('.editBtn').show();
-      $(".customer".concat(customerId, " .editSaveBtn")).attr('class', 'editSaveBtn text-dark d-none');
-      $(".customer".concat(customerId, " td h6")).show();
-      $(".customer".concat(customerId, " span")).text("");
-      $(".customer".concat(customerId, " input")).attr('type', 'hidden');
-    },
-    error: function error(_ref2) {
-      var responseJSON = _ref2.responseJSON;
-      var errors = responseJSON.errors;
-      $(".customer".concat(customerId, " input:not(:hidden)")).each(function (index, value) {
-        var name = $(this).attr('name');
-        if (name && errors[name]) {
-          $(errors[name]).each(function (index, value) {
-            $(".customer".concat(customerId, " .error_").concat(name)).text(value);
+  var url = $(this).data('url');
+  console.log(url);
+  console.log("New data!");
+  $.each(customerData, function (index, value) {
+    var newValue = value['value'];
+    var oldValue = $(".customer".concat(customerId, " h6#").concat(value['name'])).text();
+    if (!index) return;
+    if (newValue != oldValue) {
+      console.log("Value not equal! return Ajax", value['name']);
+      $.ajax({
+        url: url,
+        method: "PUT",
+        data: customerData,
+        success: function success(_ref) {
+          var status = _ref.status,
+            customer = _ref.customer;
+          console.log(status, customer);
+          $.each(customer, function (index, value) {
+            console.log(index, value);
+            if (index == "_token") return;
+            $(".customer".concat(customerId, " h6#").concat(index)).text(value);
           });
-        } else $(".customer".concat(customerId, " .error_").concat(name)).text("");
+          $('.editBtn').show();
+          $(".customer".concat(customerId, " .editSaveBtn")).attr('class', 'editSaveBtn text-dark d-none');
+          $(".customer".concat(customerId, " td h6")).show();
+          $(".customer".concat(customerId, " span")).text("");
+          $(".customer".concat(customerId, " input")).attr('type', 'hidden');
+        },
+        error: function error(_ref2) {
+          var responseJSON = _ref2.responseJSON;
+          var errors = responseJSON.errors;
+          $(".customer".concat(customerId, " input:not(:hidden)")).each(function (index, value) {
+            var name = $(this).attr('name');
+            if (name && errors[name]) {
+              $(errors[name]).each(function (index, value) {
+                $(".customer".concat(customerId, " .error_").concat(name)).text(value);
+              });
+            } else $(".customer".concat(customerId, " .error_").concat(name)).text("");
+          });
+        }
       });
+      return false;
     }
+    console.log("Value equal!", value['name']);
   });
+  console.log("not return ajax!");
+  $('.editBtn').show();
+  $(".customer".concat(customerId, " .editSaveBtn")).attr('class', 'editSaveBtn text-dark d-none');
+  $(".customer".concat(customerId, " td h6")).show();
+  $(".customer".concat(customerId, " span")).text("");
+  $(".customer".concat(customerId, " input")).attr('type', 'hidden');
 });
 $('.btnCancelAddCustomer').on('click', function () {
   $('.addCustomer')[0].reset();
