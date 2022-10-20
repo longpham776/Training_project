@@ -26,7 +26,7 @@ class StoreCustomerRequest extends FormRequest
         return [
             'name' => 'required|min:5',
             'email' => 'required|email|unique:customers',
-            'phone' => 'required|regex:/^(0)([1-9\s\-\+\(\)]*)$/|min:10',
+            'phone' => 'required|regex:/^(0)([0-9\s\-\+\(\)]*)$/|min:10|max:10',
             'address' => 'required'
         ];
     }
@@ -41,6 +41,7 @@ class StoreCustomerRequest extends FormRequest
             'phone.required' => 'Điện thoại không được để trống',
             'phone.regex' => 'Nhập không đúng định dạng điện thoại',
             'phone.min' => 'Vui lòng nhập tối thiểu 10 số',
+            'phone.max' => 'Vui lòng nhập tối đa 10 số',
             'address.required' => 'Địa chỉ không được để trống'
         ];
     }
