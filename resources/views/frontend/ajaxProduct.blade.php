@@ -47,7 +47,7 @@
                         <h6 id="description" class="text-truncate" style="max-width: 100px;">{{ strip_tags($prod->description) }}</h6> <input class="form-control" type="hidden" name="description" value="{{$prod->description}}">
                     </td>
                     <td>
-                        <h6 id="price" class="text-success">${{ $prod->product_price }}</h6> <input class="form-control" type="hidden" name="price" value="{{$prod->product_price}}">
+                        <h6 id="price" class="text-success">${{ number_format($prod->product_price,0) }}</h6> <input class="form-control" type="hidden" name="price" value="{{$prod->product_price}}">
                     </td>
                     <td>
                         @if($prod->is_sales == 1)
