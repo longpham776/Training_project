@@ -50,17 +50,14 @@ class ProductsController extends Controller
      */
     public function store(StoreRequestProduct $request)
     {
-        //
 
-        // dd($request->all());
-
-        $nameImage = null;
+        $qualityProduct = Product::count();
 
         $autoIdProduct = strtoupper(
             substr($request->name, 0, 1)
         ) . str_pad(
-            Product::count() + 1,
-            11 - strlen(Product::count() + 1),
+            $qualityProduct + 1,
+            11 - strlen($qualityProduct + 1),
             '0',
             STR_PAD_LEFT
         );
