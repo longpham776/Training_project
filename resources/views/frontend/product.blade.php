@@ -69,10 +69,10 @@
                                                 <input type="hidden" name="productId" id="productId">
                                                 <label><strong>Tên sản phẩm</strong></label>
                                                 <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nhập tên sản phẩm">
-                                                <span style="color:red;" class="error_name"></span><br>
+                                                <span style="color:red;" class="error" id="name"></span><br>
                                                 <label><strong>Giá bán</strong></label>
                                                 <input type="number" class="form-control" name="price" id="price" aria-describedby="helpId" placeholder="Nhập giá bán">
-                                                <span style="color:red;" class="error_price"></span><br>
+                                                <span style="color:red;" class="error" id="price"></span><br>
                                                 <label><strong>Mô tả</strong></label>
                                                 <textarea class="ckeditor form-control" name="description" id="description" rows="5" placeholder="Mô tả sản phẩm"></textarea>
                                                 <label><strong>Trạng thái</strong></label>
@@ -85,7 +85,7 @@
                                             <div class="col">
                                                 <img class="form-control h-75" name="image" id="image" alt="Image Product" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" disabled>
                                                 <input class="form-control" type="file" name="fileImage" id="fileImage"><br>
-                                                <span style="color:red;" class="error_fileImage"></span><br>
+                                                <span style="color:red;" class="error" id="fileImage"></span><br>
                                                 <button class="form-control" id="btnClearImage" type="button">Xóa file</button>
                                             </div>
                                         </div>
@@ -94,8 +94,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btnCancel btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btnStore btn btn-primary" 
-                                data-url="{{route('products.store')}}">Save</button>
+                                <button type="submit" class="btnStore btn btn-primary" data-url="{{route('products.store')}}">Save</button>
                                 <button type="submit" class="btnUpdate btn btn-primary">Save</button>
                             </div>
                         </form>

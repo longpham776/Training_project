@@ -1,4 +1,4 @@
-const { remove } = require("lodash");
+const { remove, isEmpty } = require("lodash");
 
 $(document).on('click', '.editBtn', function () {
 
@@ -49,15 +49,48 @@ $('.btnUpdate').on('click', function (e) {
 
     CKEDITOR.instances.description.updateElement();
 
-    // console.log(location.pathname);
-    // console.log($('#productId').val());
-
     let productData = new FormData($('#addProduct')[0]);
 
     let productId = $('#productId').val();
 
+    let productOldData = $(`#product${productId}`).data('init');
+
     let url = `${location.pathname}/${productId}`;
 
+    console.log(productData.get('fileImage')['name'], productOldData);
+
+    if (productOldData['product_name'] != productData.get('name')) {
+
+        return updateProduct(url,productData, productId);
+    }
+
+    if (productOldData['product_price'] != productData.get('price')) {
+
+        return updateProduct(url,productData, productId);
+    }
+
+    productOldData['product_image'] = productOldData['product_image'] ?? '';
+
+    if (productOldData['product_image'] != productData.get('fileImage')['name']) {
+
+        return updateProduct(url,productData, productId);
+    }
+
+    console.log('Value equal!');
+
+    console.log("Don't use ajax!");
+
+    $('.error').text("");
+
+    $('#modelId').modal('hide');
+
+    $('#addProduct')[0].reset();
+    
+});
+
+function updateProduct(url, productData, productId) 
+{
+    console.log("Use ajax!");
     $.ajax({
         url: url,
         method: "POST",
@@ -104,10 +137,10 @@ $('.btnUpdate').on('click', function (e) {
                     return true;
                 }
 
-                // console.log( index, $(value).text());
-
                 $(value).text(product[h6Id]);
             });
+
+            $('.error').text("");
 
             $('#modelId').modal('hide');
 
@@ -116,31 +149,35 @@ $('.btnUpdate').on('click', function (e) {
         },
 
         error: function ({ responseJSON }) {
-            // console.log(responseJSON);
 
-            // console.log(responseJSON.errors);
+            let errors = responseJSON.errors || undefined;
 
-            let errors = responseJSON.errors;
-
-            if (Object.getOwnPropertyNames(errors).length) {
-
-                $('form#addProduct input').each(function (index, value) {
-
-                    var name = $(this).attr('name');
-
-                    if (name && errors[name]) {
-
-                        $(errors[name]).each(function (index, value) {
-
-                            $(`.error_${name}`).text(value);
-                        });
-
-                    } else $(`.error_${name}`).text("");
-                });
+            if (errors === undefined) {
+                alert("Server Fail!");
+                return;
             }
+
+            let printError = $('.error');
+
+            console.log(errors);
+
+            $.each(printError, function (index, value) {
+
+                let productId = $(value).attr('id');
+
+                if (productId && errors[productId]) {
+
+                    $.each(errors[productId], function (index, messError) {
+                        $(`.error#${productId}`).text(messError);
+
+                    });
+
+                } else $(`.error#${productId}`).text("");
+
+            });
         }
     });
-});
+}
 
 $('#fileImage').change(function (e) {
 
@@ -153,9 +190,9 @@ $('#fileImage').change(function (e) {
 
 $('#btnClearImage').on('click', function (e) {
 
-    $('#fileImage').val("");
+    $('#fileImage').val(null);
 
-    $('.error_fileImage').text("");
+    $('.error#fileImage').text("");
 
     $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
 });
@@ -184,35 +221,37 @@ $('.btnStore').on('click', function (e) {
                 $('#modelId').modal('hide');
                 $('#addProduct')[0].reset();
             }
+            $('.error').text("");
             alert(message);
         },
 
         error: function ({ responseJSON }) {
 
-            console.log(responseJSON);
+            let errors = responseJSON.errors || undefined;
 
-            console.log(responseJSON.errors);
-
-            let errors = responseJSON.errors;
-
-            if (Object.getOwnPropertyNames(errors).length) {
-
-                console.log("step 1 check error");
-
-                $('form#addProduct input').each(function (index, value) {
-
-                    var name = $(this).attr('name');
-
-                    if (name && errors[name]) {
-
-                        $(errors[name]).each(function (index, value) {
-
-                            $(`.error_${name}`).text(value);
-                        });
-
-                    } else $(`.error_${name}`).text("");
-                });
+            if (errors === undefined) {
+                alert("Server Fail!");
+                return;
             }
+
+            let printError = $('.error');
+
+            console.log(errors);
+
+            $.each(printError, function (index, value) {
+
+                let productId = $(value).attr('id');
+
+                if (productId && errors[productId]) {
+
+                    $.each(errors[productId], function (index, messError) {
+                        $(`.error#${productId}`).text(messError);
+
+                    });
+
+                } else $(`.error#${productId}`).text("");
+
+            });
         }
     });
 });
@@ -324,6 +363,11 @@ function getData(page) {
 // });
 
 $('#btnAdd').on('click', function () {
+
+    CKEDITOR.instances.description.setData("");
+
+    $('.error').text("");
+
     $('.btnUpdate').hide();
 
     $('.btnStore').show();

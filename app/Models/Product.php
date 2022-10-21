@@ -26,7 +26,7 @@ class Product extends Model
 
 
     public function scopeSimple($query){
-        return $query->select('product_id','product_name','product_price','description','is_sales');
+        return $query->select('product_id','product_name','product_image','product_price','description','is_sales');
     }
 
     public function scopeDefaultSort($query){
@@ -34,20 +34,11 @@ class Product extends Model
     }
 
     public function scopeUpdateProduct($query,$data,$nameImage){
-        if(!$nameImage){
-            return $query->update([
-                'product_name' => $data["name"],
-                'product_price' => $data["price"],
-                'description' => $data["description"],
-                'is_sales' => $data["sale"]
-            ]);
-        }
-
         return $query->update([
             'product_name' => $data["name"],
             'product_image' => $nameImage,
             'product_price' => $data["price"],
-            'description' => $data["desciption"],
+            'description' => $data["description"],
             'is_sales' => $data["sale"]
         ]);
     }

@@ -37,7 +37,7 @@
             </thead>
             <tbody>
                 @forelse($products as $prod)
-                <tr id="product{{$prod->product_id}}">
+                <tr id="product{{$prod->product_id}}" data-init="{{json_encode($prod)}}">
                     <td scope="row">
                         <h6 id="productId">{{ $prod->product_id }}</h6> <input class="form-control" type="hidden" readonly name="productId" value="{{$prod->product_id}}"></td>
                     <td>

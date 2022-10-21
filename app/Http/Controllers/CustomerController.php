@@ -32,7 +32,6 @@ class CustomerController extends Controller
         $customers = Customer::simple()->defaultSort()->params($request->all())->paginate(5);
 
         if ($request->ajax()) {
-            // dd($customers, $request->all());
             return view('frontend.ajaxCustomer', compact('customers'))->render();
         }
 
@@ -125,13 +124,12 @@ class CustomerController extends Controller
 
     public function import()
     {
+
         try {
             Excel::import(new CustomersImport, request()->file('file'));
             return redirect()->route('customers.index')->with('success', 'Thêm file CSV thành công!');
         } catch (ValidationException $e) {
             $failures = $e->failures();
-
-            // dd($failures);
 
             $arr_messFail = [];
 
@@ -148,8 +146,6 @@ class CustomerController extends Controller
 
                 $arr_messFail[$failure->row()] =  trim($msg_error . ', ' . implode(', ', $failure->errors()), ', ');
             }
-
-            // dd($arr_messFail);
 
             return redirect()->back()->with(compact('arr_messFail'));
         }

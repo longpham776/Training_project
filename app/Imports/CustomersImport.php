@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Customer;
+use Exception;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +12,7 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-
+use Maatwebsite\Excel\Validators\ValidationException;
 class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettings, WithValidation, SkipsEmptyRows
 {
     use Importable;
@@ -50,6 +51,13 @@ class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettin
         });
 
         Customer::insert($customer->toArray());
+    }
+
+    public function prepareForValidation($data, $index)
+    {
+        // dd($data);
+        $data[ $index] = $data;
+        
     }
 
     public function customValidationAttributes()

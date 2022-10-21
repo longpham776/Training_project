@@ -62,6 +62,8 @@ class ProductsController extends Controller
             STR_PAD_LEFT
         );
 
+        $nameImage = null;
+
         if ($request->hasFile('fileImage')) {
             $nameImage = time() . "_" . $request->file('fileImage')->getClientOriginalName();
             $request->file('fileImage')->move(public_path('images'), $nameImage);
@@ -84,9 +86,7 @@ class ProductsController extends Controller
         }
 
         return response()->json([
-            asset("images/$nameImage"),
-            201,
-            'message' => asset("images/$nameImage") ? 'Image saved' : 'Image failed to save',
+            'message' => $store ? 'Save Successful!' : 'Save Failure',
             'status' => $store,
             'html' => $html
         ]);
@@ -125,7 +125,9 @@ class ProductsController extends Controller
      */
     public function update(UpdateProductRequest $request, $id)
     {
-        //
+        
+        
+        
         $nameImage = null;
 
         if ($request->hasFile('fileImage')) {
@@ -142,7 +144,7 @@ class ProductsController extends Controller
         }
 
         return response()->json([
-            'status' => true,
+            'status' => $update,
             'product' => $request->all()
         ]);
     }

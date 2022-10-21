@@ -9,7 +9,8 @@
 
 var _this = this;
 var _require = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"),
-  remove = _require.remove;
+  remove = _require.remove,
+  isEmpty = _require.isEmpty;
 $(document).on('click', '.editBtn', function () {
   var productId = $(this).data('id');
   var url = $(this).data('url');
@@ -34,15 +35,32 @@ $(document).on('click', '.editBtn', function () {
   });
 });
 $('.btnUpdate').on('click', function (e) {
+  var _productOldData$produ;
   e.preventDefault();
   CKEDITOR.instances.description.updateElement();
-
-  // console.log(location.pathname);
-  // console.log($('#productId').val());
-
   var productData = new FormData($('#addProduct')[0]);
   var productId = $('#productId').val();
+  var productOldData = $("#product".concat(productId)).data('init');
   var url = "".concat(location.pathname, "/").concat(productId);
+  console.log(productData.get('fileImage')['name'], productOldData);
+  if (productOldData['product_name'] != productData.get('name')) {
+    return updateProduct(url, productData, productId);
+  }
+  if (productOldData['product_price'] != productData.get('price')) {
+    return updateProduct(url, productData, productId);
+  }
+  productOldData['product_image'] = (_productOldData$produ = productOldData['product_image']) !== null && _productOldData$produ !== void 0 ? _productOldData$produ : '';
+  if (productOldData['product_image'] != productData.get('fileImage')['name']) {
+    return updateProduct(url, productData, productId);
+  }
+  console.log('Value equal!');
+  console.log("Don't use ajax!");
+  $('.error').text("");
+  $('#modelId').modal('hide');
+  $('#addProduct')[0].reset();
+});
+function updateProduct(url, productData, productId) {
+  console.log("Use ajax!");
   $.ajax({
     url: url,
     method: "POST",
@@ -73,42 +91,40 @@ $('.btnUpdate').on('click', function (e) {
           $(value).text($(product[h6Id]).text());
           return true;
         }
-
-        // console.log( index, $(value).text());
-
         $(value).text(product[h6Id]);
       });
+      $('.error').text("");
       $('#modelId').modal('hide');
       $('#addProduct')[0].reset();
     },
     error: function error(_ref2) {
       var responseJSON = _ref2.responseJSON;
-      // console.log(responseJSON);
-
-      // console.log(responseJSON.errors);
-
-      var errors = responseJSON.errors;
-      if (Object.getOwnPropertyNames(errors).length) {
-        $('form#addProduct input').each(function (index, value) {
-          var name = $(this).attr('name');
-          if (name && errors[name]) {
-            $(errors[name]).each(function (index, value) {
-              $(".error_".concat(name)).text(value);
-            });
-          } else $(".error_".concat(name)).text("");
-        });
+      var errors = responseJSON.errors || undefined;
+      if (errors === undefined) {
+        alert("Server Fail!");
+        return;
       }
+      var printError = $('.error');
+      console.log(errors);
+      $.each(printError, function (index, value) {
+        var productId = $(value).attr('id');
+        if (productId && errors[productId]) {
+          $.each(errors[productId], function (index, messError) {
+            $(".error#".concat(productId)).text(messError);
+          });
+        } else $(".error#".concat(productId)).text("");
+      });
     }
   });
-});
+}
 $('#fileImage').change(function (e) {
   var files = e.target.files;
   var url = URL.createObjectURL(files[0]);
   $('#image').attr('src', url);
 });
 $('#btnClearImage').on('click', function (e) {
-  $('#fileImage').val("");
-  $('.error_fileImage').text("");
+  $('#fileImage').val(null);
+  $('.error#fileImage').text("");
   $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
 });
 $('.btnStore').on('click', function (e) {
@@ -131,24 +147,26 @@ $('.btnStore').on('click', function (e) {
         $('#modelId').modal('hide');
         $('#addProduct')[0].reset();
       }
+      $('.error').text("");
       alert(message);
     },
     error: function error(_ref4) {
       var responseJSON = _ref4.responseJSON;
-      console.log(responseJSON);
-      console.log(responseJSON.errors);
-      var errors = responseJSON.errors;
-      if (Object.getOwnPropertyNames(errors).length) {
-        console.log("step 1 check error");
-        $('form#addProduct input').each(function (index, value) {
-          var name = $(this).attr('name');
-          if (name && errors[name]) {
-            $(errors[name]).each(function (index, value) {
-              $(".error_".concat(name)).text(value);
-            });
-          } else $(".error_".concat(name)).text("");
-        });
+      var errors = responseJSON.errors || undefined;
+      if (errors === undefined) {
+        alert("Server Fail!");
+        return;
       }
+      var printError = $('.error');
+      console.log(errors);
+      $.each(printError, function (index, value) {
+        var productId = $(value).attr('id');
+        if (productId && errors[productId]) {
+          $.each(errors[productId], function (index, messError) {
+            $(".error#".concat(productId)).text(messError);
+          });
+        } else $(".error#".concat(productId)).text("");
+      });
     }
   });
 });
@@ -229,6 +247,8 @@ function getData(page) {
 // });
 
 $('#btnAdd').on('click', function () {
+  CKEDITOR.instances.description.setData("");
+  $('.error').text("");
   $('.btnUpdate').hide();
   $('.btnStore').show();
   $('#addProduct')[0].reset();

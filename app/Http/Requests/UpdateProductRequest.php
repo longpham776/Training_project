@@ -29,7 +29,7 @@ class UpdateProductRequest extends FormRequest
         return [
             //
             'name' => 'required|min:5',
-            'price' => 'required|numeric|gt:0',
+            'price' => 'required|numeric|gt:-1',
             'fileImage' => 'image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=1024,max_height=1024'
         ];
     }
