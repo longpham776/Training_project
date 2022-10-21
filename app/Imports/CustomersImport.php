@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Customer;
 use Exception;
+use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -46,18 +47,14 @@ class CustomersImport implements ToCollection, WithStartRow, WithCustomCsvSettin
                 'customer_name' => $item[0],
                 'email' => $item[1],
                 'tel_num' => $item[2],
-                'address' => $item[3]
+                'address' => $item[3],
+                'is_active' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ];
         });
 
         Customer::insert($customer->toArray());
-    }
-
-    public function prepareForValidation($data, $index)
-    {
-        // dd($data);
-        $data[ $index] = $data;
-        
     }
 
     public function customValidationAttributes()

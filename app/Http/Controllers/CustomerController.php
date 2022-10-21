@@ -122,12 +122,53 @@ class CustomerController extends Controller
         //
     }
 
+    public function duplicateEmail($fileCsv, $currentKey, $currentRow){
+
+        $rowDuplicate = [];
+        
+        foreach ($fileCsv as $keyCheck => $rowCheck) {
+
+            if ($currentKey == $keyCheck)   continue;
+
+            if ($currentRow[1] == $rowCheck[1]) {
+
+                $mess_Duplicate = !empty($rowDuplicate[$currentKey]) ? $rowDuplicate[$currentKey] : '';
+                
+                $rowDuplicate[$currentKey] = trim($mess_Duplicate . ", Dòng " . $keyCheck + 2, ", ");
+            }
+        }
+
+        return $rowDuplicate;
+    }
+
     public function import()
     {
-
         try {
+
+            request()->validate([
+                'file' => 'required|mimes:csv'
+            ]);
+    
+            $fileCsv = Excel::toArray(new CustomersImport, request()->file('file'));
+    
+            $mess_Duplicate = [];
+    
+            foreach ($fileCsv[0] as $key1 => $row1) {
+                
+                $emailCheck = $row1[1];
+    
+                $mess_Duplicate[$key1] = implode("",$this->duplicateEmail($fileCsv[0], $key1, $row1));
+    
+            }
+
+            if(implode("",$mess_Duplicate)){
+                return redirect()->back()->with(compact('mess_Duplicate'));
+            }
+
             Excel::import(new CustomersImport, request()->file('file'));
+
             return redirect()->route('customers.index')->with('success', 'Thêm file CSV thành công!');
+
         } catch (ValidationException $e) {
             $failures = $e->failures();
 

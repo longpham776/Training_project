@@ -12,6 +12,7 @@ var _require = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.j
   remove = _require.remove,
   isEmpty = _require.isEmpty;
 $(document).on('click', '.editBtn', function () {
+  $('.error').text("");
   var productId = $(this).data('id');
   var url = $(this).data('url');
   $.ajax({

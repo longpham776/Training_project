@@ -2,6 +2,8 @@ const { remove, isEmpty } = require("lodash");
 
 $(document).on('click', '.editBtn', function () {
 
+    $('.error').text("");
+
     let productId = $(this).data('id');
 
     let url = $(this).data('url');

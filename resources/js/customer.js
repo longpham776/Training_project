@@ -75,10 +75,10 @@ $(document).on('click', '.editSaveBtn', function (e) {
 
                     console.log(status, customer);
 
-                    $.each(customer,function(index,value){
-                        console.log(index,value);
-                        
-                        if(index == "_token")   return;
+                    $.each(customer, function (index, value) {
+                        console.log(index, value);
+
+                        if (index == "_token") return;
 
                         $(`.customer${customerId} h6#${index}`).text(value);
                     });
@@ -111,7 +111,7 @@ $(document).on('click', '.editSaveBtn', function (e) {
 
                         } else $(`.customer${customerId} .error_${name}`).text("");
                     });
-                    
+
                 }
             });
 
