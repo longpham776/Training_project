@@ -21,9 +21,9 @@ class ProductsController extends Controller
         if (!Cookie::get('user') && !session()->has('users')) {
             return redirect()->route('login');
         }
-        //
+        
         $products = Product::simple()->defaultSort()->params($request->all())->paginate(5);
-        // dd($products);
+
         if ($request->ajax()) {
 
             return view('frontend.ajaxProduct', compact('products'))->render();
@@ -126,26 +126,36 @@ class ProductsController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         
-        
-        
-        $nameImage = null;
+        $nameImage = $request->imageName;
 
         if ($request->hasFile('fileImage')) {
             $nameImage = time() . "_" . $request->file('fileImage')->getClientOriginalName();
             $request->file('fileImage')->move(public_path('images'), $nameImage);
         }
 
-        $update = Product::id($request->productId)->updateProduct($request->all(), $nameImage);
+        // dd($request->all());
+
+        $data = [
+            'product_name' => $request->name,
+            'product_image' => $nameImage,
+            'product_price' => $request->price,
+            'description' => $request->description,
+            'is_sales' => $request->sale
+        ];
+
+        $update = Product::id($request->productId)->updateProduct($data);
 
         if (!$update) {
             return response()->json([
-                'status' => false
+                'status' => $update
             ]);
         }
 
+
         return response()->json([
             'status' => $update,
-            'product' => $request->all()
+            'product' => $request->all(),
+            'productJson' => json_encode($data) 
         ]);
     }
 

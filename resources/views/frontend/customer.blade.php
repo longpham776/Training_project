@@ -67,21 +67,22 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="{{route('customers.import')}}" method="post" enctype="multipart/form-data">
+                        <form class="importCsv" action="{{route('customers.import')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
                                 <div class="custom-file">
-                                    <input class="custom-file-input" type="file" name="file">
-                                    <label class="custom-file-label">File CSV</label>
+                                    <input class="form-control" type="file" name="file">
+                                    <!-- <label class="custom-file-label">File CSV</label> -->
                                 </div>
+                                <span style="color:red;" class="error_file"></span>
                                 @error('file')
-                                <span style="color:red;" class="error_name">{{ $message }}</span>
+                                <span style="color:red;" class="error_file">{{ $message }}</span>
                                 @enderror
                             </div>
                             
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Import</button>
+                                <button type="button" class="close btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" name="btnImport" class="btn btn-primary">Import</button>
                             </div>
                         </form>
                     </div>

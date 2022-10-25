@@ -23,9 +23,11 @@ $(document).on('click', '.editBtn', function () {
       console.log(data[0]);
       $('.btnStore').hide();
       $('.btnUpdate').show();
+      $('#fileImage').val(null);
       $('input[name=productId]').val(productId);
       $('input[name=name]').val(data[0]['product_name']);
       $('input[name=price]').val(data[0]['product_price']);
+      $('input[name=imageName]').val(data[0]['product_image']);
       CKEDITOR.instances.description.setData(data[0]['description']);
       if (data[0]['is_sales'] == 1) $('form#addProduct select').val(data[0]['is_sales']).change();else if (data[0]['is_sales'] == 0) $('form#addProduct select').val(data[0]['is_sales']).change();
       if (data[0]['product_image'] != null) $('img[name=image]').attr('src', "http://".concat(location.host, "/Rcv_Project/public/images/").concat(data[0]['product_image']));else $('img[name=image]').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
@@ -36,12 +38,11 @@ $(document).on('click', '.editBtn', function () {
   });
 });
 $('.btnUpdate').on('click', function (e) {
-  var _productOldData$produ;
   e.preventDefault();
   CKEDITOR.instances.description.updateElement();
   var productData = new FormData($('#addProduct')[0]);
   var productId = $('#productId').val();
-  var productOldData = $("#product".concat(productId)).data('init');
+  var productOldData = jQuery.parseJSON($("#product".concat(productId)).attr("data-init"));
   var url = "".concat(location.pathname, "/").concat(productId);
   console.log(productData.get('fileImage')['name'], productOldData);
   if (productOldData['product_name'] != productData.get('name')) {
@@ -50,8 +51,11 @@ $('.btnUpdate').on('click', function (e) {
   if (productOldData['product_price'] != productData.get('price')) {
     return updateProduct(url, productData, productId);
   }
-  productOldData['product_image'] = (_productOldData$produ = productOldData['product_image']) !== null && _productOldData$produ !== void 0 ? _productOldData$produ : '';
-  if (productOldData['product_image'] != productData.get('fileImage')['name']) {
+
+  // productOldData['product_image'] = productOldData['product_image'] ?? '';    
+  console.log(productOldData['product_image'] || '', $('#imageName').val());
+  if ((productOldData['product_image'] || '') != $('#imageName').val()) {
+    console.log("Image not equal!");
     return updateProduct(url, productData, productId);
   }
   console.log('Value equal!');
@@ -70,8 +74,12 @@ function updateProduct(url, productData, productId) {
     processData: false,
     success: function success(_ref) {
       var status = _ref.status,
-        product = _ref.product;
+        product = _ref.product,
+        productJson = _ref.productJson;
       var h6 = $("#product".concat(productId, " h6"));
+      console.log($("#product".concat(productId)).attr("data-init"), productJson);
+      $("#product".concat(productId)).attr("data-init", productJson);
+      console.log($("#product".concat(productId)).attr("data-init"));
       $.each(h6, function (index, value) {
         var h6Id = $(value).attr('id');
         if (h6Id == "sale") {
@@ -118,13 +126,23 @@ function updateProduct(url, productData, productId) {
     }
   });
 }
-$('#fileImage').change(function (e) {
-  var files = e.target.files;
-  var url = URL.createObjectURL(files[0]);
+$('#fileImage').on('change', function (e) {
+  var file = e.target.files[0];
+  if (!file) {
+    $('#imageName').val('');
+    $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
+    return;
+  }
+  console.log("file Image", file);
+  var fileName = file.name;
+  var url = URL.createObjectURL(file);
   $('#image').attr('src', url);
+  console.log("fileName", fileName);
+  $('#imageName').val(fileName);
 });
 $('#btnClearImage').on('click', function (e) {
   $('#fileImage').val(null);
+  $('#fileImage').trigger('change');
   $('.error#fileImage').text("");
   $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
 });

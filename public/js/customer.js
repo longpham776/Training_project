@@ -11,6 +11,13 @@ var _this = this;
 $(document).ready(function () {
   $('form.editCustomer span').hide();
 });
+$('button[name="btnImport"]').on('click', function (e) {
+  if (!$('.importCsv input[name="file"]').val()) {
+    $('.error_file').text("This field must be required!");
+    return;
+  }
+  $('.importCsv').trigger('submit');
+});
 $('#btnClear').on('click', function () {
   $('.searchCustomer')[0].reset();
   getData(1);
@@ -99,6 +106,8 @@ $('.btnCancelAddCustomer').on('click', function () {
 });
 $('.close').on('click', function () {
   $('.addCustomer')[0].reset();
+  $('.importCsv')[0].reset();
+  $('.error_file').text('');
   $('form.addCustomer span').text("");
 });
 $('.btnAddCustomer').on('click', function (e) {

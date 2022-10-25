@@ -20,11 +20,15 @@ $(document).on('click', '.editBtn', function () {
 
             $('.btnUpdate').show();
 
+            $('#fileImage').val(null);
+
             $('input[name=productId]').val(productId);
 
             $('input[name=name]').val(data[0]['product_name']);
 
             $('input[name=price]').val(data[0]['product_price']);
+
+            $('input[name=imageName]').val(data[0]['product_image']);
 
             CKEDITOR.instances.description.setData(data[0]['description']);
 
@@ -55,7 +59,7 @@ $('.btnUpdate').on('click', function (e) {
 
     let productId = $('#productId').val();
 
-    let productOldData = $(`#product${productId}`).data('init');
+    let productOldData = jQuery.parseJSON($(`#product${productId}`).attr("data-init"));
 
     let url = `${location.pathname}/${productId}`;
 
@@ -63,19 +67,21 @@ $('.btnUpdate').on('click', function (e) {
 
     if (productOldData['product_name'] != productData.get('name')) {
 
-        return updateProduct(url,productData, productId);
+        return updateProduct(url, productData, productId);
     }
 
     if (productOldData['product_price'] != productData.get('price')) {
 
-        return updateProduct(url,productData, productId);
+        return updateProduct(url, productData, productId);
     }
 
-    productOldData['product_image'] = productOldData['product_image'] ?? '';
+    // productOldData['product_image'] = productOldData['product_image'] ?? '';    
+    console.log((productOldData['product_image'] || '') , $('#imageName').val());
+    if ((productOldData['product_image'] || '') != $('#imageName').val()) {
 
-    if (productOldData['product_image'] != productData.get('fileImage')['name']) {
+        console.log("Image not equal!");
 
-        return updateProduct(url,productData, productId);
+        return updateProduct(url, productData, productId);
     }
 
     console.log('Value equal!');
@@ -87,12 +93,12 @@ $('.btnUpdate').on('click', function (e) {
     $('#modelId').modal('hide');
 
     $('#addProduct')[0].reset();
-    
+
 });
 
-function updateProduct(url, productData, productId) 
-{
+function updateProduct(url, productData, productId) {
     console.log("Use ajax!");
+
     $.ajax({
         url: url,
         method: "POST",
@@ -100,9 +106,15 @@ function updateProduct(url, productData, productId)
         contentType: false,
         processData: false,
 
-        success: function ({ status, product }) {
+        success: function ({ status, product, productJson }) {
 
             let h6 = $(`#product${productId} h6`);
+
+            console.log($(`#product${productId}`).attr("data-init"), productJson);
+
+            $(`#product${productId}`).attr("data-init", productJson);
+
+            console.log($(`#product${productId}`).attr("data-init"));
 
             $.each(h6, function (index, value) {
 
@@ -181,19 +193,36 @@ function updateProduct(url, productData, productId)
     });
 }
 
-$('#fileImage').change(function (e) {
+$('#fileImage').on('change', function(e){
 
-    let files = e.target.files;
+    let file = e.target.files[0];
 
-    let url = URL.createObjectURL(files[0]);
+    if(!file){
+        
+        $('#imageName').val('');
+        $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');
+
+        return;
+    }
+
+
+    console.log("file Image",file);
+
+    let fileName = file.name;
+
+    let url = URL.createObjectURL(file);
 
     $('#image').attr('src', url);
+
+    console.log("fileName", fileName);
+
+    $('#imageName').val(fileName);
 });
 
 $('#btnClearImage').on('click', function (e) {
 
     $('#fileImage').val(null);
-
+    $('#fileImage').trigger('change');
     $('.error#fileImage').text("");
 
     $('#image').attr('src', 'https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg');

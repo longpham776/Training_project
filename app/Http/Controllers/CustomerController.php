@@ -65,7 +65,7 @@ class CustomerController extends Controller
         $html = null;
 
         if ($store) {
-            $customers = Customer::active()->simple()->defaultSort()->paginate(5);
+            $customers = Customer::simple()->defaultSort()->paginate(5);
             $html = view('frontend.ajaxCustomer', compact('customers'))->render();
         }
 
@@ -122,10 +122,11 @@ class CustomerController extends Controller
         //
     }
 
-    public function duplicateEmail($fileCsv, $currentKey, $currentRow){
+    public function duplicateEmail($fileCsv, $currentKey, $currentRow)
+    {
 
         $rowDuplicate = [];
-        
+
         foreach ($fileCsv as $keyCheck => $rowCheck) {
 
             if ($currentKey == $keyCheck)   continue;
@@ -133,7 +134,7 @@ class CustomerController extends Controller
             if ($currentRow[1] == $rowCheck[1]) {
 
                 $mess_Duplicate = !empty($rowDuplicate[$currentKey]) ? $rowDuplicate[$currentKey] : '';
-                
+
                 $rowDuplicate[$currentKey] = trim($mess_Duplicate . ", Dòng " . $keyCheck + 2, ", ");
             }
         }
@@ -146,29 +147,44 @@ class CustomerController extends Controller
         try {
 
             request()->validate([
-                'file' => 'required|mimes:csv'
+                'file' => 'required|mimes:csv,txt'
             ]);
-    
-            $fileCsv = Excel::toArray(new CustomersImport, request()->file('file'));
-    
-            $mess_Duplicate = [];
-    
-            foreach ($fileCsv[0] as $key1 => $row1) {
-                
-                $emailCheck = $row1[1];
-    
-                $mess_Duplicate[$key1] = implode("",$this->duplicateEmail($fileCsv[0], $key1, $row1));
-    
-            }
 
-            if(implode("",$mess_Duplicate)){
-                return redirect()->back()->with(compact('mess_Duplicate'));
+            $fileCsv = Excel::toArray(new CustomersImport, request()->file('file'));
+
+            $emailColumn = 1;
+
+            $fileCsv = collect($fileCsv[0])->map(function ($row, $index) {
+                $row['row'] = $index + 2;
+
+                return $row;
+            })
+            ->groupBy($emailColumn)
+            ->filter(function ($rows) {
+                $isDuplicate = count($rows) >= 2;
+                
+                return $isDuplicate;
+            })->map(function ($rows, $email) {
+                return "Dòng {$rows->pluck("row")->implode(", ")} trùng {$email}";
+            })->toArray();
+
+            // $mess_Duplicate = [];
+
+            // foreach ($fileCsv[0] as $key1 => $row1) {
+
+            //     $emailCheck = $row1[1];
+
+            //     $mess_Duplicate[$key1] = implode("",$this->duplicateEmail($fileCsv[0], $key1, $row1));
+
+            // }
+
+            if ($fileCsv) {
+                return redirect()->back()->with(compact('fileCsv'));
             }
 
             Excel::import(new CustomersImport, request()->file('file'));
 
             return redirect()->route('customers.index')->with('success', 'Thêm file CSV thành công!');
-
         } catch (ValidationException $e) {
             $failures = $e->failures();
 

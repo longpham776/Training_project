@@ -30,11 +30,11 @@
     </div>
     @endif
 
-    @if( session('mess_Duplicate') )
+    @if( session('fileCsv') )
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>Sorry! Dupplicate email in File CSV</strong><br>
-        @foreach( session('mess_Duplicate') as $row => $error)
-        <span class="text-danger">Dòng {{ $row + 2 }} trùng email : {{ $error }} </span><br>
+        @foreach( session('fileCsv') as $email => $error)
+        <span class="text-danger"> {{ $error }} </span><br>
         @endforeach
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>

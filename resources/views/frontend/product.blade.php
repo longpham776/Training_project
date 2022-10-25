@@ -83,6 +83,7 @@
                                             </div>
                                             <label><strong>Hình ảnh</strong></label>
                                             <div class="col">
+                                                <input type="hidden" name="imageName" id="imageName">
                                                 <img class="form-control h-75" name="image" id="image" alt="Image Product" src="https://www.lg.com/lg5-common-gp/images/common/product-default-list-350.jpg" disabled>
                                                 <input class="form-control" type="file" name="fileImage" id="fileImage"><br>
                                                 <span style="color:red;" class="error" id="fileImage"></span><br>
